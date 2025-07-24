@@ -185,83 +185,123 @@ class WebJapaneseSRSApp {
     async init() {
         this.setupEventListeners();
         await this.loadInitialData();
-        this.renderDashboard();
+        await this.renderDashboard();
     }
 
     setupEventListeners() {
         // Navigation
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        const navBtns = document.querySelectorAll('.nav-btn');
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
                 const view = e.target.dataset.view;
-                this.switchView(view);
+                await this.switchView(view);
             });
         });
 
         // Dashboard buttons
-        document.getElementById('start-review').addEventListener('click', () => {
-            this.startReview();
-        });
+        const startReviewBtn = document.getElementById('start-review');
+        if (startReviewBtn) {
+            startReviewBtn.addEventListener('click', () => {
+                this.startReview();
+            });
+        }
 
         // Review buttons
-        document.getElementById('back-to-dashboard').addEventListener('click', () => {
-            this.switchView('dashboard');
-        });
+        const backToDashboardBtn = document.getElementById('back-to-dashboard');
+        if (backToDashboardBtn) {
+            backToDashboardBtn.addEventListener('click', async () => {
+                await this.switchView('dashboard');
+            });
+        }
 
-        document.querySelector('.show-answer-btn').addEventListener('click', () => {
-            this.showAnswer();
-        });
+        const showAnswerBtn = document.querySelector('.show-answer-btn');
+        if (showAnswerBtn) {
+            showAnswerBtn.addEventListener('click', () => {
+                this.showAnswer();
+            });
+        }
 
-        document.getElementById('correct-btn').addEventListener('click', () => {
-            this.submitAnswer(true);
-        });
+        const correctBtn = document.getElementById('correct-btn');
+        if (correctBtn) {
+            correctBtn.addEventListener('click', () => {
+                this.submitAnswer(true);
+            });
+        }
 
-        document.getElementById('incorrect-btn').addEventListener('click', () => {
-            this.submitAnswer(false);
-        });
+        const incorrectBtn = document.getElementById('incorrect-btn');
+        if (incorrectBtn) {
+            incorrectBtn.addEventListener('click', () => {
+                this.submitAnswer(false);
+            });
+        }
 
         // Practice mode buttons
-        document.getElementById('practice-back-to-dashboard').addEventListener('click', () => {
-            this.switchView('dashboard');
-        });
+        const practiceBackBtn = document.getElementById('practice-back-to-dashboard');
+        if (practiceBackBtn) {
+            practiceBackBtn.addEventListener('click', async () => {
+                await this.switchView('dashboard');
+            });
+        }
 
-        document.getElementById('start-practice').addEventListener('click', () => {
-            this.startPracticeSession();
-        });
+        const startPracticeBtn = document.getElementById('start-practice');
+        if (startPracticeBtn) {
+            startPracticeBtn.addEventListener('click', () => {
+                this.startPracticeSession();
+            });
+        }
 
-        document.querySelector('#practice-show-answer .show-answer-btn').addEventListener('click', () => {
-            this.showPracticeAnswer();
-        });
+        const practiceShowAnswerBtn = document.querySelector('#practice-show-answer .show-answer-btn');
+        if (practiceShowAnswerBtn) {
+            practiceShowAnswerBtn.addEventListener('click', () => {
+                this.showPracticeAnswer();
+            });
+        }
 
-        document.getElementById('practice-correct-btn').addEventListener('click', () => {
-            this.submitPracticeAnswer(true);
-        });
+        const practiceCorrectBtn = document.getElementById('practice-correct-btn');
+        if (practiceCorrectBtn) {
+            practiceCorrectBtn.addEventListener('click', () => {
+                this.submitPracticeAnswer(true);
+            });
+        }
 
-        document.getElementById('practice-incorrect-btn').addEventListener('click', () => {
-            this.submitPracticeAnswer(false);
-        });
+        const practiceIncorrectBtn = document.getElementById('practice-incorrect-btn');
+        if (practiceIncorrectBtn) {
+            practiceIncorrectBtn.addEventListener('click', () => {
+                this.submitPracticeAnswer(false);
+            });
+        }
 
         // Browse search
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            this.filterWords(e.target.value);
-        });
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.filterWords(e.target.value);
+            });
+        }
 
         // Answer input event handlers
-        document.getElementById('answer-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.validateAnswer();
-            }
-        });
+        const answerInput = document.getElementById('answer-input');
+        if (answerInput) {
+            answerInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.validateAnswer();
+                }
+            });
+        }
 
-        document.getElementById('practice-answer-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.validatePracticeAnswer();
-            }
-        });
+        const practiceAnswerInput = document.getElementById('practice-answer-input');
+        if (practiceAnswerInput) {
+            practiceAnswerInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.validatePracticeAnswer();
+                }
+            });
+        }
 
         // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', async (e) => {
             // Only handle shortcuts if not typing in an input field
             const isTyping = e.target.tagName === 'INPUT';
             
@@ -269,8 +309,9 @@ class WebJapaneseSRSApp {
                 switch(e.key) {
                     case ' ':
                         e.preventDefault();
-                        if (!this.isAnswerVisible) {
-                            document.getElementById('answer-input').focus();
+                        const reviewAnswerInput = document.getElementById('answer-input');
+                        if (!this.isAnswerVisible && reviewAnswerInput) {
+                            reviewAnswerInput.focus();
                         }
                         break;
                     case '1':
@@ -284,15 +325,16 @@ class WebJapaneseSRSApp {
                         }
                         break;
                     case 'Escape':
-                        this.switchView('dashboard');
+                        await this.switchView('dashboard');
                         break;
                 }
             } else if (this.currentView === 'practice' && !isTyping) {
                 switch(e.key) {
                     case ' ':
                         e.preventDefault();
-                        if (!this.isAnswerVisible) {
-                            document.getElementById('practice-answer-input').focus();
+                        const practiceInput = document.getElementById('practice-answer-input');
+                        if (!this.isAnswerVisible && practiceInput) {
+                            practiceInput.focus();
                         }
                         break;
                     case '1':
@@ -306,7 +348,7 @@ class WebJapaneseSRSApp {
                         }
                         break;
                     case 'Escape':
-                        this.switchView('dashboard');
+                        await this.switchView('dashboard');
                         break;
                 }
             }
@@ -322,19 +364,29 @@ class WebJapaneseSRSApp {
         const importModal = document.getElementById('importExportModal');
         
         // Setup cloud storage button
-        document.getElementById('setupCloudBtn').addEventListener('click', () => {
-            setupModal.classList.add('show');
-        });
+        const setupCloudBtn = document.getElementById('setupCloudBtn');
+        if (setupCloudBtn && setupModal) {
+            setupCloudBtn.addEventListener('click', () => {
+                setupModal.classList.add('show');
+            });
+        }
 
         // Import/Export button
-        document.getElementById('importExportBtn').addEventListener('click', () => {
-            this.showImportExportModal();
-        });
+        const importExportBtn = document.getElementById('importExportBtn');
+        if (importExportBtn) {
+            importExportBtn.addEventListener('click', () => {
+                this.showImportExportModal();
+            });
+        }
 
         // Modal close buttons
-        document.querySelectorAll('.modal-close').forEach(btn => {
+        const modalCloseBtns = document.querySelectorAll('.modal-close');
+        modalCloseBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.target.closest('.modal').classList.remove('show');
+                const modal = e.target.closest('.modal');
+                if (modal) {
+                    modal.classList.remove('show');
+                }
             });
         });
 
@@ -346,34 +398,49 @@ class WebJapaneseSRSApp {
         });
 
         // Setup form submission
-        document.getElementById('setupForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleCloudSetup();
-        });
+        const setupForm = document.getElementById('setupForm');
+        if (setupForm) {
+            setupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleCloudSetup();
+            });
+        }
 
         // Import/Export actions
-        document.getElementById('exportDataBtn').addEventListener('click', () => {
-            this.exportUserData();
-        });
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        if (exportDataBtn) {
+            exportDataBtn.addEventListener('click', () => {
+                this.exportUserData();
+            });
+        }
 
-        document.getElementById('importDataBtn').addEventListener('click', () => {
-            this.importUserData();
-        });
+        const importDataBtn = document.getElementById('importDataBtn');
+        if (importDataBtn) {
+            importDataBtn.addEventListener('click', () => {
+                this.importUserData();
+            });
+        }
 
         // Clear local data
-        document.getElementById('clearLocalBtn').addEventListener('click', () => {
-            if (confirm('This will delete all your local progress. Are you sure?')) {
-                localStorage.removeItem('japanese-srs-userdata');
-                this.userData = this.createDefaultUserData();
-                this.showNotification('Local data cleared', 'info');
-                this.renderDashboard();
-            }
-        });
+        const clearLocalBtn = document.getElementById('clearLocalBtn');
+        if (clearLocalBtn) {
+            clearLocalBtn.addEventListener('click', () => {
+                if (confirm('This will delete all your local progress. Are you sure?')) {
+                    localStorage.removeItem('japanese-srs-userdata');
+                    this.userData = this.createDefaultUserData();
+                    this.showNotification('Local data cleared', 'info');
+                    this.renderDashboard();
+                }
+            });
+        }
 
         // Sync cloud data
-        document.getElementById('syncCloudBtn').addEventListener('click', () => {
-            this.syncCloudData();
-        });
+        const syncCloudBtn = document.getElementById('syncCloudBtn');
+        if (syncCloudBtn) {
+            syncCloudBtn.addEventListener('click', () => {
+                this.syncCloudData();
+            });
+        }
     }
 
     async handleCloudSetup() {
@@ -557,7 +624,7 @@ class WebJapaneseSRSApp {
         
         // Fallback to local storage
         const data = localStorage.getItem('japanese-srs-userdata');
-        return data ? JSON.parse(data) : [];
+        return data ? JSON.parse(data) : { words: {}, stats: {} };
     }
 
     async setUserData(data) {
@@ -596,6 +663,10 @@ class WebJapaneseSRSApp {
     }
 
     getWords() {
+        if (typeof VOCABULARY_DATA === 'undefined') {
+            console.error('VOCABULARY_DATA is not defined! Check if data.js is loaded properly.');
+            return [];
+        }
         return VOCABULARY_DATA; // From data.js
     }
 
@@ -606,28 +677,29 @@ class WebJapaneseSRSApp {
 
     async getReviewWords() {
         const words = this.getWords();
-        const userData = this.getUserData();
+        const userData = await this.getUserData();
+        const userWordsMap = userData.words || {};
         const now = new Date();
         const reviewWords = [];
         
-        const userKanji = new Set(userData.map(word => word.kanji));
+        const userKanji = new Set(Object.keys(userWordsMap));
 
         // Add new words to user data
         for (const word of words) {
             if (!userKanji.has(word.kanji)) {
-                userData.push({
+                userWordsMap[word.kanji] = {
                     kanji: word.kanji,
                     stage: "Apprentice 1",
                     next_review: new Date(now.getTime() + this.STAGES["Apprentice 1"]).toISOString()
-                });
+                };
                 userKanji.add(word.kanji);
             }
         }
 
-        this.setUserData(userData);
+        await this.setUserData({ words: userWordsMap, stats: userData.stats || {} });
 
         // Get words due for review
-        for (const wordData of userData) {
+        for (const [kanji, wordData] of Object.entries(userWordsMap)) {
             if (wordData.stage === "Burned") continue;
             if (new Date(wordData.next_review) <= now) {
                 const word = words.find(w => w.kanji === wordData.kanji);
@@ -657,56 +729,61 @@ class WebJapaneseSRSApp {
     async updateWord(kanji, correct, practiceMode = false) {
         if (practiceMode) return { success: true, practiceMode: true };
         
-        const userData = this.getUserData();
+        const userData = await this.getUserData();
+        const userWordsMap = userData.words || {};
         
-        for (const wordData of userData) {
-            if (wordData.kanji === kanji) {
-                const currentStageIndex = this.STAGE_ORDER.indexOf(wordData.stage);
-                
-                if (correct) {
-                    if (currentStageIndex < this.STAGE_ORDER.length - 1) {
-                        const newStage = this.STAGE_ORDER[currentStageIndex + 1];
-                        wordData.stage = newStage;
-                        const interval = this.STAGES[newStage];
-                        if (interval) {
-                            wordData.next_review = new Date(Date.now() + interval).toISOString();
-                        } else {
-                            delete wordData.next_review;
-                        }
-                    }
-                } else {
-                    const demotionCount = currentStageIndex > this.STAGE_ORDER.indexOf("Guru 1") ? 2 : 1;
-                    const newStageIndex = Math.max(0, currentStageIndex - demotionCount);
-                    const newStage = this.STAGE_ORDER[newStageIndex];
+        if (userWordsMap[kanji]) {
+            const wordData = userWordsMap[kanji];
+            const currentStageIndex = this.STAGE_ORDER.indexOf(wordData.stage);
+            
+            if (correct) {
+                if (currentStageIndex < this.STAGE_ORDER.length - 1) {
+                    const newStage = this.STAGE_ORDER[currentStageIndex + 1];
                     wordData.stage = newStage;
-                    wordData.next_review = new Date(Date.now() + this.STAGES[newStage]).toISOString();
+                    const interval = this.STAGES[newStage];
+                    if (interval) {
+                        wordData.next_review = new Date(Date.now() + interval).toISOString();
+                    } else {
+                        delete wordData.next_review;
+                    }
                 }
-                
-                this.setUserData(userData);
-                return { success: true, practiceMode: false };
+            } else {
+                const demotionCount = currentStageIndex > this.STAGE_ORDER.indexOf("Guru 1") ? 2 : 1;
+                const newStageIndex = Math.max(0, currentStageIndex - demotionCount);
+                const newStage = this.STAGE_ORDER[newStageIndex];
+                wordData.stage = newStage;
+                wordData.next_review = new Date(Date.now() + this.STAGES[newStage]).toISOString();
             }
+            
+            await this.setUserData({ words: userWordsMap, stats: userData.stats || {} });
+            return { success: true, practiceMode: false };
         }
+        
+        return { success: false, error: 'Word not found' };
     }
 
     async updateStats() {
-        const userData = this.getUserData();
+        const userData = await this.getUserData();
+        const userWordsArray = Object.values(userData.words || {});
+        
         const stats = {};
         
         for (const stage of this.STAGE_ORDER) {
-            stats[stage] = userData.filter(word => word.stage === stage).length;
+            stats[stage] = userWordsArray.filter(word => word.stage === stage).length;
         }
         
         const now = new Date();
-        const reviewCount = userData.filter(word => 
+        const reviewCount = userWordsArray.filter(word => 
             word.stage !== "Burned" && 
             word.next_review && 
             new Date(word.next_review) <= now
         ).length;
         
         stats.reviewCount = reviewCount;
-        stats.totalWords = userData.length;
+        stats.totalWords = this.allWords.length;
         
         this.stats = stats;
+        
         return stats;
     }
 
@@ -752,7 +829,7 @@ class WebJapaneseSRSApp {
         };
     }
 
-    switchView(viewName) {
+    async switchView(viewName) {
         // Hide all views
         document.querySelectorAll('.view').forEach(view => {
             view.classList.remove('active');
@@ -771,9 +848,9 @@ class WebJapaneseSRSApp {
 
         // Load view-specific content
         if (viewName === 'dashboard') {
-            this.renderDashboard();
+            await this.renderDashboard();
         } else if (viewName === 'browse') {
-            this.renderBrowse();
+            await this.renderBrowse();
         }
     }
 
@@ -781,16 +858,27 @@ class WebJapaneseSRSApp {
         await this.updateStats();
         
         // Update review count and button state
-        document.getElementById('review-count').textContent = this.stats.reviewCount;
-        document.getElementById('total-words').textContent = this.stats.totalWords;
+        const reviewCountEl = document.getElementById('review-count');
+        const totalWordsEl = document.getElementById('total-words');
+        
+        if (reviewCountEl) {
+            reviewCountEl.textContent = this.stats.reviewCount;
+        }
+        
+        if (totalWordsEl) {
+            totalWordsEl.textContent = this.stats.totalWords;
+        }
         
         const startReviewBtn = document.getElementById('start-review');
-        if (this.stats.reviewCount > 0) {
-            startReviewBtn.disabled = false;
-            startReviewBtn.textContent = 'Start Reviewing';
-        } else {
-            startReviewBtn.disabled = true;
-            startReviewBtn.textContent = 'No Reviews Available';
+        if (startReviewBtn) {
+            if (this.stats.reviewCount > 0) {
+                startReviewBtn.disabled = false;
+                startReviewBtn.textContent = 'Start Reviewing';
+            } else {
+                startReviewBtn.disabled = true;
+                startReviewBtn.textContent = 'No Reviews Available';
+            }
+            addDebug('9. Updated start review button');
         }
 
         // Update progress bars
@@ -801,28 +889,60 @@ class WebJapaneseSRSApp {
                                (this.stats["Apprentice 2"] || 0) + 
                                (this.stats["Apprentice 3"] || 0) + 
                                (this.stats["Apprentice 4"] || 0);
-        document.getElementById('apprentice-count').textContent = apprenticeCount;
-        document.getElementById('apprentice-progress').style.width = `${(apprenticeCount / totalWords) * 100}%`;
+        const apprenticeEl = document.getElementById('apprentice-count');
+        if (apprenticeEl) {
+            apprenticeEl.textContent = apprenticeCount;
+        }
+        const apprenticeProgressEl = document.getElementById('apprentice-progress');
+        if (apprenticeProgressEl) {
+            apprenticeProgressEl.style.width = `${(apprenticeCount / totalWords) * 100}%`;
+        }
 
         // Guru (combine both guru levels)
         const guruCount = (this.stats["Guru 1"] || 0) + (this.stats["Guru 2"] || 0);
-        document.getElementById('guru-count').textContent = guruCount;
-        document.getElementById('guru-progress').style.width = `${(guruCount / totalWords) * 100}%`;
+        const guruEl = document.getElementById('guru-count');
+        if (guruEl) {
+            guruEl.textContent = guruCount;
+        }
+        const guruProgressEl = document.getElementById('guru-progress');
+        if (guruProgressEl) {
+            guruProgressEl.style.width = `${(guruCount / totalWords) * 100}%`;
+        }
 
         // Master
         const masterCount = this.stats["Master"] || 0;
-        document.getElementById('master-count').textContent = masterCount;
-        document.getElementById('master-progress').style.width = `${(masterCount / totalWords) * 100}%`;
+        const masterEl = document.getElementById('master-count');
+        if (masterEl) {
+            masterEl.textContent = masterCount;
+        }
+        const masterProgressEl = document.getElementById('master-progress');
+        if (masterProgressEl) {
+            masterProgressEl.style.width = `${(masterCount / totalWords) * 100}%`;
+        }
 
         // Enlightened
         const enlightenedCount = this.stats["Enlightened"] || 0;
-        document.getElementById('enlightened-count').textContent = enlightenedCount;
-        document.getElementById('enlightened-progress').style.width = `${(enlightenedCount / totalWords) * 100}%`;
+        const enlightenedEl = document.getElementById('enlightened-count');
+        if (enlightenedEl) {
+            enlightenedEl.textContent = enlightenedCount;
+        }
+        const enlightenedProgressEl = document.getElementById('enlightened-progress');
+        if (enlightenedProgressEl) {
+            enlightenedProgressEl.style.width = `${(enlightenedCount / totalWords) * 100}%`;
+        }
 
         // Burned
         const burnedCount = this.stats["Burned"] || 0;
-        document.getElementById('burned-count').textContent = burnedCount;
-        document.getElementById('burned-progress').style.width = `${(burnedCount / totalWords) * 100}%`;
+        const burnedEl = document.getElementById('burned-count');
+        if (burnedEl) {
+            burnedEl.textContent = burnedCount;
+        }
+        const burnedProgressEl = document.getElementById('burned-progress');
+        if (burnedProgressEl) {
+            burnedProgressEl.style.width = `${(burnedCount / totalWords) * 100}%`;
+        }
+        
+        addDebug('10. Completed renderDashboard');
     }
 
     async startReview() {
@@ -834,7 +954,7 @@ class WebJapaneseSRSApp {
             }
 
             this.currentReviewIndex = 0;
-            this.switchView('review');
+            await this.switchView('review');
             await this.showCurrentReviewWord();
         } catch (error) {
             console.error('Error starting review:', error);
@@ -987,10 +1107,10 @@ class WebJapaneseSRSApp {
         document.getElementById('no-reviews').style.display = 'block';
         
         // Auto-redirect to dashboard after 3 seconds
-        setTimeout(() => {
+        setTimeout(async () => {
             document.getElementById('review-card').style.display = 'flex';
             document.getElementById('no-reviews').style.display = 'none';
-            this.switchView('dashboard');
+            await this.switchView('dashboard');
         }, 3000);
     }
 
@@ -1185,10 +1305,15 @@ class WebJapaneseSRSApp {
         }, 3000);
     }
 
-    renderBrowse() {
+    async renderBrowse() {
         const wordGrid = document.getElementById('word-grid');
-        const userData = this.getUserData();
-        const userProgressMap = new Map(userData.map(word => [word.kanji, word]));
+        if (!wordGrid) {
+            console.error('word-grid element not found');
+            return;
+        }
+        
+        const userData = await this.getUserData();
+        const userProgressMap = new Map(Object.entries(userData.words || {}));
 
         wordGrid.innerHTML = this.allWords.map(word => {
             const userProgress = userProgressMap.get(word.kanji);
@@ -1245,5 +1370,5 @@ class WebJapaneseSRSApp {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new WebJapaneseSRSApp();
+    window.app = new WebJapaneseSRSApp();
 });

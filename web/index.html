@@ -16,7 +16,7 @@
                     <button class="nav-btn active" data-view="dashboard">Dashboard</button>
                     <button class="nav-btn" data-view="review">Review</button>
                     <button class="nav-btn" data-view="practice">Practice</button>
-                    <button class="nav-btn" data-view="browse">Browse</button>
+                    <button class="nav-btn" data-view="browse">Dictionary</button>
                 </nav>
             </div>
         </header>
@@ -331,7 +331,25 @@
         </div>
     </div>
 
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+    <script>
+        // Test if scripts are loading in correct order
+        console.log('Inline script running...');
+        if (typeof VOCABULARY_DATA !== 'undefined') {
+            console.log('VOCABULARY_DATA available in inline script:', VOCABULARY_DATA.length);
+        } else {
+            console.log('VOCABULARY_DATA not available in inline script');
+        }
+    </script>
+    <script src="data.js?v=3"></script>
+    <script>
+        // Test after data.js loads
+        console.log('After data.js load...');
+        if (typeof VOCABULARY_DATA !== 'undefined') {
+            console.log('VOCABULARY_DATA available after data.js:', VOCABULARY_DATA.length);
+        } else {
+            console.log('VOCABULARY_DATA not available after data.js');
+        }
+    </script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>

@@ -34,8 +34,8 @@ function createWindow() {
         show: false // Don't show until ready-to-show
     });
 
-    // Load the Electron-specific web application
-    const webPath = path.join(__dirname, '..', 'web', 'index-electron.html');
+    // Load the web application
+    const webPath = path.join(__dirname, '..', 'web', 'index.html');
     mainWindow.loadFile(webPath);
 
     // Show window when ready to prevent visual flash

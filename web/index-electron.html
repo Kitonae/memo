@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese SRS - 日本語勉強</title>
+    <link rel="stylesheet" href="styles-electron.css">
+    <style>
+        /* Electron-specific styles */
+        body {
+            margin: 0;
+            padding: 0;
+            user-select: none; /* Prevent text selection in desktop app */
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .notification.info {
+            background-color: #007bff;
+        }
+        
+        .notification.success {
+            background-color: #28a745;
+        }
+        
+        .notification.error {
+            background-color: #dc3545;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .stage-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stage-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stage-emoji {
+            font-size: 1.2em;
+        }
+        
+        .stage-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .stage-count {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">日本語 SRS</h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-view="review">Review</button>
+                    <button class="nav-btn" data-view="practice">Practice</button>
+                    <button class="nav-btn" data-view="browse">Dictionary</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard View -->
+            <div class="view active" id="dashboard-view">
+                <div class="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-words">0</div>
+                            <div class="stat-label">Total Words</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number" id="words-due">0</div>
+                            <div class="stat-label">Words Due</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number" id="words-today">0</div>
+                            <div class="stat-label">Reviewed Today</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number" id="accuracy">0%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <h2>Learning Stages</h2>
+                        <div class="stage-breakdown" id="stage-breakdown">
+                            <!-- Stage items will be dynamically populated -->
+                        </div>
+                    </div>
+
+                    <div class="action-section">
+                        <button class="btn-primary" id="start-review">Start Review Session</button>
+                        <button class="btn-secondary" id="start-practice">Practice Mode</button>
+                    </div>
+                    
+                    <div class="desktop-notice">
+                        <p>🖥️ <strong>Desktop Version:</strong> Your progress is automatically saved locally</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review View -->
+            <div class="view" id="review-view">
+                <div class="review-container">
+                    <div class="review-header">
+                        <button class="back-btn" id="back-to-dashboard">← Back to Dashboard</button>
+                        <span class="review-progress" id="review-progress">0 / 0</span>
+                    </div>
+                    
+                    <div class="review-card" id="review-card">
+                        <div class="word-display">
+                            <div class="kanji" id="review-kanji">日本語</div>
+                        </div>
+                        
+                        <div class="answer-input-section">
+                            <input type="text" id="answer-input" placeholder="Type the English translation..." autocomplete="off">
+                        </div>
+                        
+                        <div class="show-answer-section" id="show-answer">
+                            <button class="show-answer-btn">Show Answer or Press Enter</button>
+                        </div>
+                        
+                        <div class="answer-section" id="answer-section" style="display: none;">
+                            <div class="answer-comparison">
+                                <div class="answer-item">
+                                    <span class="answer-label">Your answer:</span>
+                                    <span class="answer-text" id="user-answer"></span>
+                                </div>
+                                <div class="answer-item">
+                                    <span class="answer-label">Correct answer:</span>
+                                    <span class="answer-text" id="correct-answer"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="answer-buttons">
+                                <button class="btn-danger" id="incorrect-btn">Incorrect (1)</button>
+                                <button class="btn-success" id="correct-btn">Correct (2)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice View -->
+            <div class="view" id="practice-view">
+                <div class="practice-container">
+                    <div class="practice-header">
+                        <button class="back-btn" id="practice-back-to-dashboard">← Back to Dashboard</button>
+                        <span class="practice-progress" id="practice-progress">0 / 0</span>
+                        <span class="practice-mode-indicator">🎯 Practice Mode</span>
+                    </div>
+                    
+                    <div class="practice-card">
+                        <div class="word-display">
+                            <div class="kanji" id="practice-kanji">日本語</div>
+                        </div>
+                        
+                        <div class="answer-input-section">
+                            <input type="text" id="practice-answer-input" placeholder="Type the English translation..." autocomplete="off">
+                        </div>
+                        
+                        <div class="show-answer-section" id="practice-show-answer">
+                            <button class="show-answer-btn">Show Answer or Press Enter</button>
+                        </div>
+                        
+                        <div class="answer-section" id="practice-answer-section" style="display: none;">
+                            <div class="answer-comparison">
+                                <div class="answer-item">
+                                    <span class="answer-label">Your answer:</span>
+                                    <span class="answer-text" id="practice-user-answer"></span>
+                                </div>
+                                <div class="answer-item">
+                                    <span class="answer-label">Correct answer:</span>
+                                    <span class="answer-text" id="practice-correct-answer"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="answer-buttons">
+                                <button class="btn-danger" id="practice-incorrect-btn">Continue (1)</button>
+                                <button class="btn-success" id="practice-correct-btn">Continue (2)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browse/Dictionary View -->
+            <div class="view" id="browse-view">
+                <div class="browse-container">
+                    <div class="browse-header">
+                        <h2>Dictionary Browser</h2>
+                        <div class="search-container">
+                            <input type="text" id="search-input" placeholder="Search words..." autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="word-list" id="word-list">
+                        <!-- Words will be dynamically populated -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load vocabulary data -->
+    <script src="data.js"></script>
+    <!-- Load Electron-compatible app -->
+    <script src="app-electron.js"></script>
+</body>
+</html>
