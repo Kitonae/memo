@@ -172,62 +172,62 @@
                 </div>
             </div>
 
-            <!-- Debug View -->
-            <div class="view" id="debug-view">
-                <div class="debug-container">
-                    <div class="debug-header">
-                        <button class="back-btn" id="debug-back-to-dashboard">← Back to Dashboard</button>
-                        <div class="debug-info">
-                            <span class="debug-badge">DEBUG MODE</span>
-                            <span class="debug-progress" id="debug-progress">0 / 0</span>
+            <!-- Practice View -->
+            <div class="view" id="practice-view">
+                <div class="practice-container">
+                    <div class="practice-header">
+                        <button class="back-btn" id="practice-back-to-dashboard">← Back to Dashboard</button>
+                        <div class="practice-info">
+                            <span class="practice-badge">PRACTICE MODE</span>
+                            <span class="practice-progress" id="practice-progress">0 / 0</span>
                         </div>
                     </div>
                     
-                    <div class="debug-controls">
-                        <label for="debug-count">Number of words:</label>
-                        <select id="debug-count">
+                    <div class="practice-controls">
+                        <label for="practice-count">Number of words:</label>
+                        <select id="practice-count">
                             <option value="5">5 words</option>
                             <option value="10" selected>10 words</option>
                             <option value="20">20 words</option>
                             <option value="50">50 words</option>
                         </select>
-                        <button class="start-debug-btn" id="start-debug">Start Debug Session</button>
+                        <button class="start-practice-btn" id="start-practice">Start Practice Session</button>
                     </div>
                     
-                    <div class="debug-notice">
-                        <p>🛠️ Debug mode lets you practice without affecting your SRS progress</p>
+                    <div class="practice-notice">
+                        <p>🎯 Practice mode lets you practice without affecting your SRS progress</p>
                     </div>
                     
-                    <div class="review-card" id="debug-card" style="display: none;">
+                    <div class="review-card" id="practice-card" style="display: none;">
                         <div class="word-display">
-                            <div class="stage-indicator" id="debug-stage">🌱 Apprentice 1</div>
-                            <div class="kanji" id="debug-kanji">日本語</div>
-                            <div class="furigana" id="debug-furigana" style="display: none;">にほんご</div>
-                            <div class="translation" id="debug-translation" style="display: none;">Japanese language</div>
+                            <div class="stage-indicator" id="practice-stage">🌱 Apprentice 1</div>
+                            <div class="kanji" id="practice-kanji">日本語</div>
+                            <div class="furigana" id="practice-furigana" style="display: none;">にほんご</div>
+                            <div class="translation" id="practice-translation" style="display: none;">Japanese language</div>
                         </div>
                         
-                        <div class="answer-input-container" id="debug-answer-input-container">
-                            <input type="text" class="answer-input" id="debug-answer-input" placeholder="Enter your answer..." autocomplete="off">
+                        <div class="answer-input-container" id="practice-answer-input-container">
+                            <input type="text" class="answer-input" id="practice-answer-input" placeholder="Enter your answer..." autocomplete="off">
                             <div class="input-hint">Press Enter to submit</div>
                         </div>
                         
-                        <div class="review-actions" id="debug-actions" style="display: none;">
-                            <button class="review-btn incorrect" id="debug-incorrect-btn">Incorrect</button>
-                            <button class="review-btn correct" id="debug-correct-btn">Correct</button>
+                        <div class="review-actions" id="practice-actions" style="display: none;">
+                            <button class="review-btn incorrect" id="practice-incorrect-btn">Incorrect</button>
+                            <button class="review-btn correct" id="practice-correct-btn">Correct</button>
                         </div>
                         
-                        <div class="show-answer" id="debug-show-answer" style="display: none;">
+                        <div class="show-answer" id="practice-show-answer" style="display: none;">
                             <button class="show-answer-btn">Show Answer</button>
                         </div>
                         
-                        <div class="validation-result" id="debug-validation-result" style="display: none;">
-                            <div class="validation-message" id="debug-validation-message"></div>
-                            <div class="correct-answers" id="debug-correct-answers"></div>
+                        <div class="validation-result" id="practice-validation-result" style="display: none;">
+                            <div class="validation-message" id="practice-validation-message"></div>
+                            <div class="correct-answers" id="practice-correct-answers"></div>
                         </div>
                     </div>
                     
-                    <div class="debug-complete" id="debug-complete" style="display: none;">
-                        <h2>🎯 Debug Session Complete!</h2>
+                    <div class="practice-complete" id="practice-complete" style="display: none;">
+                        <h2>🎯 Practice Session Complete!</h2>
                         <p>No SRS progress was affected. Ready for another session?</p>
                     </div>
                 </div>

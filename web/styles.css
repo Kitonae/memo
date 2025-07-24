@@ -635,13 +635,13 @@ body {
     }
 }
 
-/* Debug Mode Styles */
-.debug-container {
+/* Practice Mode Styles */
+.practice-container {
     max-width: 800px;
     margin: 0 auto;
 }
 
-.debug-header {
+.practice-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -649,14 +649,14 @@ body {
     color: white;
 }
 
-.debug-info {
+.practice-info {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.debug-badge {
-    background: #f56565;
+.practice-badge {
+    background: #38a169;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -666,12 +666,12 @@ body {
     letter-spacing: 0.5px;
 }
 
-.debug-progress {
+.practice-progress {
     font-size: 1.1rem;
     font-weight: 500;
 }
 
-.debug-controls {
+.practice-controls {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     padding: 2rem;
@@ -683,12 +683,12 @@ body {
     flex-wrap: wrap;
 }
 
-.debug-controls label {
+.practice-controls label {
     color: white;
     font-weight: 500;
 }
 
-.debug-controls select {
+.practice-controls select {
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 8px;
@@ -696,8 +696,8 @@ body {
     font-size: 1rem;
 }
 
-.start-debug-btn {
-    background: #f56565;
+.start-practice-btn {
+    background: #38a169;
     color: white;
     border: none;
     padding: 0.75rem 2rem;
@@ -708,28 +708,28 @@ body {
     margin-left: auto;
 }
 
-.start-debug-btn:hover {
-    background: #e53e3e;
+.start-practice-btn:hover {
+    background: #2f855a;
     transform: translateY(-2px);
 }
 
-.debug-notice {
-    background: rgba(249, 202, 36, 0.2);
-    border: 1px solid rgba(249, 202, 36, 0.3);
+.practice-notice {
+    background: rgba(56, 161, 105, 0.2);
+    border: 1px solid rgba(56, 161, 105, 0.3);
     border-radius: 12px;
     padding: 1rem;
     margin-bottom: 2rem;
     backdrop-filter: blur(10px);
 }
 
-.debug-notice p {
+.practice-notice p {
     color: white;
     margin: 0;
     text-align: center;
     font-weight: 500;
 }
 
-.debug-complete {
+.practice-complete {
     text-align: center;
     color: white;
     padding: 3rem;
@@ -738,12 +738,12 @@ body {
     backdrop-filter: blur(10px);
 }
 
-.debug-complete h2 {
+.practice-complete h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
-.debug-complete p {
+.practice-complete p {
     font-size: 1.2rem;
     opacity: 0.8;
 }

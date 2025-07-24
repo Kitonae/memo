@@ -143,10 +143,10 @@ class WebJapaneseSRSApp {
         this.stats = {};
         this.isAnswerVisible = false;
         
-        // Debug mode properties
-        this.debugWords = [];
-        this.currentDebugIndex = 0;
-        this.isDebugMode = false;
+        // Practice mode properties
+        this.practiceWords = [];
+        this.currentPracticeIndex = 0;
+        this.isPracticeMode = false;
         
         // Storage managers
         this.cloudStorage = new CloudStorageManager();
@@ -219,25 +219,25 @@ class WebJapaneseSRSApp {
             this.submitAnswer(false);
         });
 
-        // Debug mode buttons
-        document.getElementById('debug-back-to-dashboard').addEventListener('click', () => {
+        // Practice mode buttons
+        document.getElementById('practice-back-to-dashboard').addEventListener('click', () => {
             this.switchView('dashboard');
         });
 
-        document.getElementById('start-debug').addEventListener('click', () => {
-            this.startDebugSession();
+        document.getElementById('start-practice').addEventListener('click', () => {
+            this.startPracticeSession();
         });
 
-        document.querySelector('#debug-show-answer .show-answer-btn').addEventListener('click', () => {
-            this.showDebugAnswer();
+        document.querySelector('#practice-show-answer .show-answer-btn').addEventListener('click', () => {
+            this.showPracticeAnswer();
         });
 
-        document.getElementById('debug-correct-btn').addEventListener('click', () => {
-            this.submitDebugAnswer(true);
+        document.getElementById('practice-correct-btn').addEventListener('click', () => {
+            this.submitPracticeAnswer(true);
         });
 
-        document.getElementById('debug-incorrect-btn').addEventListener('click', () => {
-            this.submitDebugAnswer(false);
+        document.getElementById('practice-incorrect-btn').addEventListener('click', () => {
+            this.submitPracticeAnswer(false);
         });
 
         // Browse search
@@ -253,10 +253,10 @@ class WebJapaneseSRSApp {
             }
         });
 
-        document.getElementById('debug-answer-input').addEventListener('keydown', (e) => {
+        document.getElementById('practice-answer-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                this.validateDebugAnswer();
+                this.validatePracticeAnswer();
             }
         });
 
@@ -287,22 +287,22 @@ class WebJapaneseSRSApp {
                         this.switchView('dashboard');
                         break;
                 }
-            } else if (this.currentView === 'debug' && !isTyping) {
+            } else if (this.currentView === 'practice' && !isTyping) {
                 switch(e.key) {
                     case ' ':
                         e.preventDefault();
                         if (!this.isAnswerVisible) {
-                            document.getElementById('debug-answer-input').focus();
+                            document.getElementById('practice-answer-input').focus();
                         }
                         break;
                     case '1':
                         if (this.isAnswerVisible) {
-                            this.submitDebugAnswer(false);
+                            this.submitPracticeAnswer(false);
                         }
                         break;
                     case '2':
                         if (this.isAnswerVisible) {
-                            this.submitDebugAnswer(true);
+                            this.submitPracticeAnswer(true);
                         }
                         break;
                     case 'Escape':
@@ -654,8 +654,8 @@ class WebJapaneseSRSApp {
         return reviewWords;
     }
 
-    async updateWord(kanji, correct, debugMode = false) {
-        if (debugMode) return { success: true, debugMode: true };
+    async updateWord(kanji, correct, practiceMode = false) {
+        if (practiceMode) return { success: true, practiceMode: true };
         
         const userData = this.getUserData();
         
@@ -683,7 +683,7 @@ class WebJapaneseSRSApp {
                 }
                 
                 this.setUserData(userData);
-                return { success: true, debugMode: false };
+                return { success: true, practiceMode: false };
             }
         }
     }
@@ -994,24 +994,24 @@ class WebJapaneseSRSApp {
         }, 3000);
     }
 
-    async startDebugSession() {
+    async startPracticeSession() {
         try {
-            const count = parseInt(document.getElementById('debug-count').value);
-            this.debugWords = await this.getDebugWords(count);
-            this.currentDebugIndex = 0;
-            this.isDebugMode = true;
+            const count = parseInt(document.getElementById('practice-count').value);
+            this.practiceWords = await this.getPracticeWords(count);
+            this.currentPracticeIndex = 0;
+            this.isPracticeMode = true;
             
-            document.getElementById('debug-card').style.display = 'flex';
-            document.getElementById('debug-complete').style.display = 'none';
-            await this.showCurrentDebugWord();
+            document.getElementById('practice-card').style.display = 'flex';
+            document.getElementById('practice-complete').style.display = 'none';
+            await this.showCurrentPracticeWord();
         } catch (error) {
-            console.error('Error starting debug session:', error);
+            console.error('Error starting practice session:', error);
         }
     }
 
-    async getDebugWords(count = 10) {
+    async getPracticeWords(count = 10) {
         const words = this.getWords();
-        // Shuffle and return a subset for debug mode
+        // Shuffle and return a subset for practice mode
         const shuffled = words.sort(() => 0.5 - Math.random());
         const selectedWords = shuffled.slice(0, count);
         
@@ -1032,31 +1032,31 @@ class WebJapaneseSRSApp {
         });
     }
 
-    async showCurrentDebugWord() {
-        if (this.currentDebugIndex >= this.debugWords.length) {
-            this.completeDebugSession();
+    async showCurrentPracticeWord() {
+        if (this.currentPracticeIndex >= this.practiceWords.length) {
+            this.completePracticeSession();
             return;
         }
 
-        const word = this.debugWords[this.currentDebugIndex];
+        const word = this.practiceWords[this.currentPracticeIndex];
         this.isAnswerVisible = false;
 
         // Update progress
-        document.getElementById('debug-progress').textContent = 
-            `${this.currentDebugIndex + 1} / ${this.debugWords.length}`;
+        document.getElementById('practice-progress').textContent = 
+            `${this.currentPracticeIndex + 1} / ${this.practiceWords.length}`;
 
         // Show word
-        document.getElementById('debug-kanji').textContent = word.kanji;
-        document.getElementById('debug-furigana').textContent = word.furigana;
+        document.getElementById('practice-kanji').textContent = word.kanji;
+        document.getElementById('practice-furigana').textContent = word.furigana;
         
         // Show current stage with emoji
         const userData = await this.getUserData();
         const wordProgress = userData.words[word.kanji];
         const currentStage = wordProgress ? wordProgress.stage : 'Apprentice 1';
-        document.getElementById('debug-stage').textContent = this.getStageDisplayText(currentStage);
+        document.getElementById('practice-stage').textContent = this.getStageDisplayText(currentStage);
         
         // Handle multiple translations with descriptions
-        const translationElement = document.getElementById('debug-translation');
+        const translationElement = document.getElementById('practice-translation');
         if (word.translations && word.translations.length > 0) {
             const translationOptions = word.translations.map(t => {
                 if (typeof t === 'object' && t.text) {
@@ -1081,66 +1081,66 @@ class WebJapaneseSRSApp {
         }
 
         // Hide answer elements
-        document.getElementById('debug-furigana').style.display = 'none';
-        document.getElementById('debug-translation').style.display = 'none';
-        document.getElementById('debug-actions').style.display = 'none';
-        document.getElementById('debug-validation-result').style.display = 'none';
+        document.getElementById('practice-furigana').style.display = 'none';
+        document.getElementById('practice-translation').style.display = 'none';
+        document.getElementById('practice-actions').style.display = 'none';
+        document.getElementById('practice-validation-result').style.display = 'none';
         
         // Show answer input and fallback button
-        document.getElementById('debug-answer-input-container').style.display = 'flex';
-        document.getElementById('debug-answer-input').value = '';
-        document.getElementById('debug-answer-input').focus();
+        document.getElementById('practice-answer-input-container').style.display = 'flex';
+        document.getElementById('practice-answer-input').value = '';
+        document.getElementById('practice-answer-input').focus();
         
         // Show a "Show Answer" button as fallback
-        document.getElementById('debug-show-answer').style.display = 'block';
+        document.getElementById('practice-show-answer').style.display = 'block';
     }
 
-    showDebugAnswer() {
+    showPracticeAnswer() {
         this.isAnswerVisible = true;
         
         // Show answer elements
-        document.getElementById('debug-furigana').style.display = 'block';
-        document.getElementById('debug-translation').style.display = 'block';
-        document.getElementById('debug-actions').style.display = 'flex';
+        document.getElementById('practice-furigana').style.display = 'block';
+        document.getElementById('practice-translation').style.display = 'block';
+        document.getElementById('practice-actions').style.display = 'flex';
         
         // Hide show answer button and input
-        document.getElementById('debug-show-answer').style.display = 'none';
-        document.getElementById('debug-answer-input-container').style.display = 'none';
+        document.getElementById('practice-show-answer').style.display = 'none';
+        document.getElementById('practice-answer-input-container').style.display = 'none';
     }
 
-    async validateDebugAnswer() {
-        const input = document.getElementById('debug-answer-input');
+    async validatePracticeAnswer() {
+        const input = document.getElementById('practice-answer-input');
         const userAnswer = input.value.trim();
         
         if (!userAnswer) return;
         
         try {
-            const word = this.debugWords[this.currentDebugIndex];
+            const word = this.practiceWords[this.currentPracticeIndex];
             const result = await this.checkTranslation(word.kanji, userAnswer);
             
-            this.displayDebugValidationResult(result, userAnswer);
+            this.displayPracticeValidationResult(result, userAnswer);
             
             // Hide input container
-            document.getElementById('debug-answer-input-container').style.display = 'none';
+            document.getElementById('practice-answer-input-container').style.display = 'none';
             
             // Show furigana and translation
-            document.getElementById('debug-furigana').style.display = 'block';
-            document.getElementById('debug-translation').style.display = 'block';
+            document.getElementById('practice-furigana').style.display = 'block';
+            document.getElementById('practice-translation').style.display = 'block';
             
             // Show review actions for final decision
-            document.getElementById('debug-actions').style.display = 'flex';
+            document.getElementById('practice-actions').style.display = 'flex';
             
             this.isAnswerVisible = true;
             
         } catch (error) {
-            console.error('Error validating debug answer:', error);
+            console.error('Error validating practice answer:', error);
         }
     }
 
-    displayDebugValidationResult(result, userAnswer) {
-        const validationResult = document.getElementById('debug-validation-result');
-        const validationMessage = document.getElementById('debug-validation-message');
-        const correctAnswers = document.getElementById('debug-correct-answers');
+    displayPracticeValidationResult(result, userAnswer) {
+        const validationResult = document.getElementById('practice-validation-result');
+        const validationMessage = document.getElementById('practice-validation-message');
+        const correctAnswers = document.getElementById('practice-correct-answers');
         
         validationResult.style.display = 'block';
         validationResult.className = 'validation-result ' + (result.valid ? 'correct' : 'incorrect');
@@ -1156,28 +1156,28 @@ class WebJapaneseSRSApp {
         }
     }
 
-    async submitDebugAnswer(correct) {
+    async submitPracticeAnswer(correct) {
         try {
-            const word = this.debugWords[this.currentDebugIndex];
-            // Call with debug mode = true, so SRS progress is not affected
+            const word = this.practiceWords[this.currentPracticeIndex];
+            // Call with practice mode = true, so SRS progress is not affected
             await this.updateWord(word.kanji, correct, true);
             
-            this.currentDebugIndex++;
+            this.currentPracticeIndex++;
             
             // Small delay for UX
             setTimeout(async () => {
-                await this.showCurrentDebugWord();
+                await this.showCurrentPracticeWord();
             }, 300);
         } catch (error) {
-            console.error('Error submitting debug answer:', error);
+            console.error('Error submitting practice answer:', error);
         }
     }
 
-    completeDebugSession() {
+    completePracticeSession() {
         // Show completion message
-        document.getElementById('debug-card').style.display = 'none';
-        document.getElementById('debug-complete').style.display = 'block';
-        this.isDebugMode = false;
+        document.getElementById('practice-card').style.display = 'none';
+        document.getElementById('practice-complete').style.display = 'block';
+        this.isPracticeMode = false;
         
         // Auto-hide completion message after 3 seconds
         setTimeout(() => {
