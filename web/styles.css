@@ -71,6 +71,44 @@ body {
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+/* Footer */
+.footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 0;
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.cloud-status-footer {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-left: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .cloud-status-footer {
+        margin-left: 0;
+        font-size: 0.8rem;
+    }
+}
+
 /* Main Content */
 .main {
     flex: 1;
@@ -853,55 +891,22 @@ body {
     font-size: 0.95rem;
 }
 
-/* Cloud Storage Section */
-.cloud-storage-section {
+/* Web Notice */
+.web-notice {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
     margin-top: 2rem;
 }
 
-.cloud-storage-section h2 {
+.web-notice p {
     color: white;
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.storage-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-}
-
-.storage-option {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-}
-
-.storage-icon {
-    font-size: 2rem;
-    flex-shrink: 0;
-}
-
-.storage-info h3 {
-    margin: 0 0 0.5rem 0;
-    color: #2d3748;
-    font-size: 1.1rem;
-}
-
-.storage-info p {
-    margin: 0 0 1rem 0;
-    color: #718096;
+    margin: 0;
     font-size: 0.9rem;
-}
-
-.storage-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary, .btn-secondary, .btn-danger {

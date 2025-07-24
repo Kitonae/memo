@@ -360,11 +360,11 @@ class WebJapaneseSRSApp {
 
     setupCloudStorageUI() {
         // Setup modal handlers
-        const setupModal = document.getElementById('cloudSetupModal');
-        const importModal = document.getElementById('importExportModal');
+        const setupModal = document.getElementById('cloud-setup-modal');
+        const importModal = document.getElementById('import-export-modal');
         
         // Setup cloud storage button
-        const setupCloudBtn = document.getElementById('setupCloudBtn');
+        const setupCloudBtn = document.getElementById('setup-cloud');
         if (setupCloudBtn && setupModal) {
             setupCloudBtn.addEventListener('click', () => {
                 setupModal.classList.add('show');

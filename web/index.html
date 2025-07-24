@@ -94,25 +94,8 @@
                         </div>
                     </div>
 
-                    <div class="cloud-storage-section">
-                        <h2>Cloud Storage</h2>
-                        <div class="storage-options">
-                            <div class="storage-option cloud-storage">
-                                <div class="storage-icon">☁️</div>
-                                <div class="storage-info">
-                                    <h3>Cloud Storage</h3>
-                                    <p id="cloud-status">Not configured - sync across devices</p>
-                                    <div class="storage-actions">
-                                        <button class="btn-primary" id="setup-cloud">Setup Cloud Sync</button>
-                                        <button class="btn-danger" id="disconnect-cloud" style="display: none;">Disconnect</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="web-notice">
-                        <p>📱 <strong>Web Version:</strong> Choose between local browser storage or cloud sync</p>
+                        <p>📱 <strong>Web Version:</strong> Your progress is automatically saved locally in your browser</p>
                     </div>
                 </div>
             </div>
@@ -237,6 +220,15 @@
                 </div>
             </div>
         </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <button class="btn-secondary" id="setup-cloud">☁️ Setup Cloud Sync</button>
+                <button class="btn-danger" id="disconnect-cloud" style="display: none;">Disconnect Cloud</button>
+                <span class="cloud-status-footer" id="cloud-status">Sync across devices</span>
+            </div>
+        </footer>
     </div>
 
     <!-- Cloud Setup Modal -->
