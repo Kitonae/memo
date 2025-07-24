@@ -1,0 +1,72 @@
+---
+layout: none
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese SRS - Loading...</title>
+    <meta http-equiv="refresh" content="0; url=./web/">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+        }
+        .loading { 
+            animation: pulse 1.5s ease-in-out infinite; 
+        }
+        @keyframes pulse { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.5; } 
+        }
+        a {
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        a:hover { 
+            background: rgba(255, 255, 255, 0.3); 
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 1rem 0;
+        }
+        p {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>日本語 SRS</h1>
+        <p class="loading">Loading Japanese learning app...</p>
+        <p>Redirecting to the spaced repetition system...</p>
+        <a href="./web/">Click here if not redirected automatically</a>
+    </div>
+    <script>
+        // Immediate redirect to web app
+        window.location.href = './web/';
+    </script>
+</body>
+</html>

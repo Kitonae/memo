@@ -1,51 +1,183 @@
-name: Deploy to GitHub Pages
+name: Deploy Jekyll site to Pages
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Generate web data
+        run: |
+          echo "Generating web data from vocabulary..."
+          node -e "
+            const fs = require('fs');
+            const words = JSON.parse(fs.readFileSync('words.json', 'utf8'));
+            const jsContent = '// Auto-generated from words.json\\n// Generated: ' + new Date().toISOString() + '\\n// Words: ' + words.length + '\\n\\nconst VOCABULARY_DATA = ' + JSON.stringify(words, null, 2) + ';';
+            fs.writeFileSync('web/data.js', jsContent);
+            console.log('Generated web/data.js with', words.length, 'words');
+          "
+          
+      - name: Create Jekyll structure
+        run: |
+          echo "Setting up Jekyll structure..."
+          
+          # Create _config.yml
+          cat > _config.yml << 'EOF'
+          title: Japanese SRS
+          description: Spaced Repetition System for Japanese vocabulary learning
+          baseurl: ""
+          url: "https://kitonae.github.io"
+          
+          # Build settings
+          markdown: kramdown
+          highlighter: rouge
+          
+          # Plugins
+          plugins:
+            - jekyll-feed
+            - jekyll-sitemap
+          
+          # Exclude files
+          exclude:
+            - README.md
+            - src/
+            - node_modules/
+            - package*.json
+            - "*.py"
+            - __pycache__/
+            - .venv/
+            - .vscode/
+            - build-web.js
+            - setup-web.js
+          
+          # Collections
+          collections_dir: collections
+          EOF
+          
+          # Create root index.html that redirects to web app
+          cat > index.html << 'EOF'
+          ---
+          layout: none
+          ---
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Japanese SRS - Loading...</title>
+              <meta http-equiv="refresh" content="0; url=./web/">
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      height: 100vh;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      margin: 0;
+                      text-align: center;
+                  }
+                  .container {
+                      background: rgba(255, 255, 255, 0.1);
+                      padding: 2rem;
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                  }
+                  .loading { animation: pulse 1.5s ease-in-out infinite; }
+                  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+                  a {
+                      color: white;
+                      text-decoration: none;
+                      padding: 0.75rem 1.5rem;
+                      background: rgba(255, 255, 255, 0.2);
+                      border-radius: 8px;
+                      display: inline-block;
+                      margin-top: 1rem;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>日本語 SRS</h1>
+                  <p class="loading">Loading Japanese learning app...</p>
+                  <a href="./web/">Click here if not redirected</a>
+              </div>
+              <script>window.location.href = './web/';</script>
+          </body>
+          </html>
+          EOF
+          
+          # Ensure web directory has proper structure
+          echo "Verifying web directory..."
+          ls -la web/
+          
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          
+      - name: Create Gemfile
+        run: |
+          cat > Gemfile << 'EOF'
+          source "https://rubygems.org"
+          
+          gem "jekyll", "~> 4.3.0"
+          gem "minima", "~> 2.5"
+          
+          group :jekyll_plugins do
+            gem "jekyll-feed", "~> 0.12"
+            gem "jekyll-sitemap"
+          end
+          
+          platforms :mingw, :x64_mingw, :mswin, :jruby do
+            gem "tzinfo", ">= 1", "< 3"
+            gem "tzinfo-data"
+          end
+          
+          gem "wdm", "~> 0.1.1", :platforms => [:mingw, :x64_mingw, :mswin]
+          gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
+          EOF
+          
+      - name: Install dependencies
+        run: bundle install
+        
+      - name: Build with Jekyll
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    
+    runs-on: ubuntu-latest
+    needs: build
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Generate web data
-      run: |
-        node -e "
-          const words = require('./words.json');
-          const fs = require('fs');
-          const jsContent = 'const VOCABULARY_DATA = ' + JSON.stringify(words, null, 2) + ';';
-          fs.writeFileSync('web/data.js', jsContent);
-          console.log('Generated web/data.js with', words.length, 'words');
-        "
-    
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-    
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: './web'
-    
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,37 @@
+title: Japanese SRS
+description: Spaced Repetition System for Japanese vocabulary learning
+baseurl: ""
+url: "https://kitonae.github.io"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - src/
+  - node_modules/
+  - package*.json
+  - "*.py"
+  - __pycache__/
+  - .venv/
+  - .vscode/
+  - build-web.js
+  - setup-web.js
+  - .git/
+  - .gitignore
+  - Gemfile
+  - Gemfile.lock
+
+# Include web directory
+include:
+  - web/
+
+# Collections
+collections_dir: collections

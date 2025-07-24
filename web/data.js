@@ -1,8 +1,4 @@
-// Auto-generated from words.json - do not edit manually
-// Generated on: 2025-07-24T20:25:07.470Z
-// Word count: 93
-
-const VOCABULARY_DATA = [
+// Auto-generated from words.json\n// Generated: 2025-07-24T20:38:28.310Z\n// Words: 93\n\nconst VOCABULARY_DATA = [
   {
     "kanji": "私",
     "furigana": "watashi",

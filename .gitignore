@@ -171,5 +171,12 @@ wheels/
 # Uncomment if you don't want to track user progress
 # user_data.json
 
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+
 # Web version - keep source files but ignore if generated
 # web/data.js is generated from words.json
