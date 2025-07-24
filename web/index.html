@@ -94,8 +94,37 @@
                         </div>
                     </div>
 
+                    <div class="cloud-storage-section">
+                        <h2>Data Storage</h2>
+                        <div class="storage-options">
+                            <div class="storage-option local-storage">
+                                <div class="storage-icon">💾</div>
+                                <div class="storage-info">
+                                    <h3>Local Browser Storage</h3>
+                                    <p>Data saved in your browser (current mode)</p>
+                                    <div class="storage-actions">
+                                        <button class="btn-secondary" id="export-data">Export Data</button>
+                                        <button class="btn-secondary" id="import-data">Import Data</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="storage-option cloud-storage">
+                                <div class="storage-icon">☁️</div>
+                                <div class="storage-info">
+                                    <h3>Cloud Storage</h3>
+                                    <p id="cloud-status">Not configured - sync across devices</p>
+                                    <div class="storage-actions">
+                                        <button class="btn-primary" id="setup-cloud">Setup Cloud Sync</button>
+                                        <button class="btn-danger" id="disconnect-cloud" style="display: none;">Disconnect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="web-notice">
-                        <p>📱 <strong>Web Version:</strong> Your progress is saved locally in your browser</p>
+                        <p>📱 <strong>Web Version:</strong> Choose between local browser storage or cloud sync</p>
                     </div>
                 </div>
             </div>
@@ -218,6 +247,86 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Cloud Setup Modal -->
+    <div class="modal" id="cloud-setup-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Setup Cloud Storage</h2>
+                <button class="modal-close" id="close-cloud-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Sync your progress across devices using GitHub Gists (free & private).</p>
+                
+                <div class="setup-step">
+                    <h3>Step 1: Create GitHub Token</h3>
+                    <p>Create a <a href="https://github.com/settings/tokens/new?scopes=gist&description=Japanese%20SRS%20Progress" target="_blank">GitHub Personal Access Token</a> with <strong>gist</strong> permissions.</p>
+                </div>
+                
+                <div class="setup-step">
+                    <label for="github-token">GitHub Token:</label>
+                    <input type="password" id="github-token" placeholder="ghp_...">
+                </div>
+                
+                <div class="setup-step">
+                    <h3>Step 2: Choose Storage</h3>
+                    <div class="setup-options">
+                        <label>
+                            <input type="radio" name="storage-type" value="new" checked>
+                            Create new storage (recommended)
+                        </label>
+                        <label>
+                            <input type="radio" name="storage-type" value="existing">
+                            Use existing Gist ID:
+                            <input type="text" id="existing-gist" placeholder="gist-id-here" disabled>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="setup-actions">
+                    <button class="btn-primary" id="setup-cloud-storage">Setup Cloud Storage</button>
+                    <button class="btn-secondary" id="cancel-cloud-setup">Cancel</button>
+                </div>
+                
+                <div class="setup-status" id="setup-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div class="modal" id="import-export-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="ie-modal-title">Import/Export Data</h2>
+                <button class="modal-close" id="close-ie-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="export-section">
+                    <h3>Export Your Progress</h3>
+                    <p>Copy this data to backup or transfer to another device:</p>
+                    <textarea id="export-data-text" readonly></textarea>
+                    <button class="btn-secondary" id="copy-export-data">Copy to Clipboard</button>
+                </div>
+                
+                <div id="import-section" style="display: none;">
+                    <h3>Import Progress Data</h3>
+                    <p>Paste your exported data below:</p>
+                    <textarea id="import-data-text" placeholder="Paste your exported data here..."></textarea>
+                    <div class="import-options">
+                        <label>
+                            <input type="radio" name="import-mode" value="merge" checked>
+                            Merge with existing data
+                        </label>
+                        <label>
+                            <input type="radio" name="import-mode" value="replace">
+                            Replace all existing data
+                        </label>
+                    </div>
+                    <button class="btn-primary" id="import-data-confirm">Import Data</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="data.js"></script>

@@ -14,11 +14,11 @@ A modern desktop application for learning Japanese vocabulary using the Spaced R
 
 ## SRS Stages
 
-1. **Apprentice 1-4**: Items you're actively learning
-2. **Guru 1-2**: Items you're getting comfortable with
-3. **Master**: Items you know well
-4. **Enlightened**: Items you've mastered
-5. **Burned**: Items permanently learned
+1. 🌱 **Apprentice 1-4**: Items you're actively learning
+2. 🎓 **Guru 1-2**: Items you're getting comfortable with
+3. 👑 **Master**: Items you know well
+4. ✨ **Enlightened**: Items you've mastered
+5. 🔥 **Burned**: Items permanently learned
 
 ## Review Schedule
 

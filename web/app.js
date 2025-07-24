@@ -1,3 +1,139 @@
+// Cloud Storage Manager using GitHub Gists
+class CloudStorageManager {
+    constructor() {
+        this.gistId = localStorage.getItem('japanese-srs-gist-id');
+        this.githubToken = localStorage.getItem('japanese-srs-github-token');
+        this.isConfigured = false;
+        this.checkConfiguration();
+    }
+
+    checkConfiguration() {
+        this.isConfigured = !!(this.gistId && this.githubToken);
+        return this.isConfigured;
+    }
+
+    async configure(githubToken, gistId = null) {
+        this.githubToken = githubToken;
+        localStorage.setItem('japanese-srs-github-token', githubToken);
+        
+        if (gistId) {
+            this.gistId = gistId;
+            localStorage.setItem('japanese-srs-gist-id', gistId);
+        } else {
+            // Create new gist
+            try {
+                const newGist = await this.createGist();
+                this.gistId = newGist.id;
+                localStorage.setItem('japanese-srs-gist-id', this.gistId);
+            } catch (error) {
+                throw new Error(`Failed to create gist: ${error.message}`);
+            }
+        }
+        
+        this.isConfigured = true;
+        return { gistId: this.gistId, success: true };
+    }
+
+    async createGist() {
+        const response = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: {
+                'Authorization': `token ${this.githubToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                description: 'Japanese SRS - User Progress Data',
+                public: false,
+                files: {
+                    'user_data.json': {
+                        content: JSON.stringify([], null, 2)
+                    }
+                }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+        }
+
+        return response.json();
+    }
+
+    async saveData(userData) {
+        if (!this.isConfigured) {
+            throw new Error('Cloud storage not configured');
+        }
+
+        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `token ${this.githubToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                files: {
+                    'user_data.json': {
+                        content: JSON.stringify({
+                            version: '1.0',
+                            lastUpdated: new Date().toISOString(),
+                            data: userData
+                        }, null, 2)
+                    }
+                }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to save to cloud: ${response.status} ${response.statusText}`);
+        }
+
+        return response.json();
+    }
+
+    async loadData() {
+        if (!this.isConfigured) {
+            return null;
+        }
+
+        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+            headers: {
+                'Authorization': `token ${this.githubToken}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to load from cloud: ${response.status} ${response.statusText}`);
+        }
+
+        const gist = await response.json();
+        const fileContent = gist.files['user_data.json']?.content;
+        
+        if (!fileContent) {
+            return [];
+        }
+
+        try {
+            const parsed = JSON.parse(fileContent);
+            return parsed.data || parsed; // Support both new and legacy formats
+        } catch (error) {
+            console.error('Error parsing cloud data:', error);
+            return [];
+        }
+    }
+
+    disconnect() {
+        localStorage.removeItem('japanese-srs-gist-id');
+        localStorage.removeItem('japanese-srs-github-token');
+        this.gistId = null;
+        this.githubToken = null;
+        this.isConfigured = false;
+    }
+
+    getGistUrl() {
+        return this.gistId ? `https://gist.github.com/${this.gistId}` : null;
+    }
+}
+
 class WebJapaneseSRSApp {
     constructor() {
         this.currentView = 'dashboard';
@@ -11,6 +147,10 @@ class WebJapaneseSRSApp {
         this.debugWords = [];
         this.currentDebugIndex = 0;
         this.isDebugMode = false;
+        
+        // Storage managers
+        this.cloudStorage = new CloudStorageManager();
+        this.useCloudStorage = false;
         
         // SRS configuration
         this.STAGES = {
@@ -158,16 +298,288 @@ class WebJapaneseSRSApp {
                 }
             }
         });
+
+        // Cloud storage UI handlers
+        this.setupCloudStorageUI();
     }
 
-    // Local Storage methods (replacing Electron file operations)
-    getUserData() {
+    setupCloudStorageUI() {
+        // Setup modal handlers
+        const setupModal = document.getElementById('cloudSetupModal');
+        const importModal = document.getElementById('importExportModal');
+        
+        // Setup cloud storage button
+        document.getElementById('setupCloudBtn').addEventListener('click', () => {
+            setupModal.classList.add('show');
+        });
+
+        // Import/Export button
+        document.getElementById('importExportBtn').addEventListener('click', () => {
+            this.showImportExportModal();
+        });
+
+        // Modal close buttons
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.target.closest('.modal').classList.remove('show');
+            });
+        });
+
+        // Click outside to close modals
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Setup form submission
+        document.getElementById('setupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleCloudSetup();
+        });
+
+        // Import/Export actions
+        document.getElementById('exportDataBtn').addEventListener('click', () => {
+            this.exportUserData();
+        });
+
+        document.getElementById('importDataBtn').addEventListener('click', () => {
+            this.importUserData();
+        });
+
+        // Clear local data
+        document.getElementById('clearLocalBtn').addEventListener('click', () => {
+            if (confirm('This will delete all your local progress. Are you sure?')) {
+                localStorage.removeItem('japanese-srs-userdata');
+                this.userData = this.createDefaultUserData();
+                this.showNotification('Local data cleared', 'info');
+                this.renderDashboard();
+            }
+        });
+
+        // Sync cloud data
+        document.getElementById('syncCloudBtn').addEventListener('click', () => {
+            this.syncCloudData();
+        });
+    }
+
+    async handleCloudSetup() {
+        const form = document.getElementById('setupForm');
+        const formData = new FormData(form);
+        const setupType = formData.get('setupType');
+        const token = formData.get('githubToken');
+        const gistId = formData.get('existingGistId');
+        
+        const statusDiv = document.getElementById('setupStatus');
+        statusDiv.style.display = 'none';
+
+        try {
+            if (setupType === 'new') {
+                // Create new cloud storage
+                const result = await this.cloudStorage.initialize(token);
+                if (result.success) {
+                    statusDiv.textContent = `Cloud storage created! Gist ID: ${result.gistId}`;
+                    statusDiv.className = 'setup-status success';
+                    statusDiv.style.display = 'block';
+                    
+                    // Upload current data
+                    await this.setUserData(this.userData);
+                    this.showNotification('Cloud storage setup complete!', 'success');
+                    
+                    // Close modal after delay
+                    setTimeout(() => {
+                        document.getElementById('cloudSetupModal').classList.remove('show');
+                    }, 2000);
+                } else {
+                    throw new Error(result.error);
+                }
+            } else if (setupType === 'existing') {
+                // Connect to existing storage
+                const result = await this.cloudStorage.initialize(token, gistId);
+                if (result.success) {
+                    // Load existing data
+                    const cloudData = await this.getUserData();
+                    if (cloudData && Object.keys(cloudData.words || {}).length > 0) {
+                        // Merge with local data (ask user what to do)
+                        const useCloud = confirm('Found existing cloud data. Use cloud data and replace local progress?');
+                        if (useCloud) {
+                            this.userData = cloudData;
+                            await this.setUserData(this.userData);
+                            this.renderDashboard();
+                        }
+                    }
+                    
+                    statusDiv.textContent = 'Successfully connected to existing cloud storage!';
+                    statusDiv.className = 'setup-status success';
+                    statusDiv.style.display = 'block';
+                    
+                    this.showNotification('Connected to cloud storage!', 'success');
+                    
+                    setTimeout(() => {
+                        document.getElementById('cloudSetupModal').classList.remove('show');
+                    }, 2000);
+                } else {
+                    throw new Error(result.error);
+                }
+            }
+        } catch (error) {
+            statusDiv.textContent = `Error: ${error.message}`;
+            statusDiv.className = 'setup-status error';
+            statusDiv.style.display = 'block';
+        }
+    }
+
+    showImportExportModal() {
+        const modal = document.getElementById('importExportModal');
+        const exportTextarea = document.getElementById('exportData');
+        
+        // Pre-fill export data
+        exportTextarea.value = JSON.stringify(this.userData, null, 2);
+        
+        modal.classList.add('show');
+    }
+
+    exportUserData() {
+        const data = JSON.stringify(this.userData, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'japanese-srs-data.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        this.showNotification('Data exported successfully!', 'success');
+    }
+
+    importUserData() {
+        const importData = document.getElementById('importData').value.trim();
+        if (!importData) {
+            this.showNotification('Please paste data to import', 'warning');
+            return;
+        }
+
+        try {
+            const data = JSON.parse(importData);
+            
+            // Validate data structure
+            if (!data.words || !data.stats) {
+                throw new Error('Invalid data format');
+            }
+
+            const mergeType = document.querySelector('input[name="importType"]:checked').value;
+            
+            if (mergeType === 'replace') {
+                this.userData = data;
+            } else {
+                // Merge data
+                Object.keys(data.words).forEach(wordId => {
+                    this.userData.words[wordId] = data.words[wordId];
+                });
+                
+                // Merge stats
+                this.userData.stats.totalAnswered += data.stats.totalAnswered || 0;
+                this.userData.stats.correctAnswers += data.stats.correctAnswers || 0;
+            }
+
+            this.setUserData(this.userData);
+            this.renderDashboard();
+            
+            document.getElementById('importExportModal').classList.remove('show');
+            this.showNotification('Data imported successfully!', 'success');
+        } catch (error) {
+            this.showNotification('Invalid JSON data', 'error');
+        }
+    }
+
+    async syncCloudData() {
+        if (!this.cloudStorage.isConfigured) {
+            this.showNotification('Cloud storage not setup', 'warning');
+            return;
+        }
+
+        try {
+            // Save current data to cloud
+            await this.setUserData(this.userData);
+            this.showNotification('Data synced to cloud!', 'success');
+        } catch (error) {
+            this.showNotification('Sync failed: ' + error.message, 'error');
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element if it doesn't exist
+        let notification = document.getElementById('notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = 'notification';
+            document.body.appendChild(notification);
+        }
+
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Unified storage methods (local + cloud)
+    async getUserData() {
+        try {
+            if (this.useCloudStorage && this.cloudStorage.isConfigured) {
+                const cloudData = await this.cloudStorage.loadData();
+                if (cloudData) {
+                    // Also save to local storage as backup
+                    localStorage.setItem('japanese-srs-userdata', JSON.stringify(cloudData));
+                    return cloudData;
+                }
+            }
+        } catch (error) {
+            console.error('Cloud storage error, falling back to local:', error);
+            this.showNotification('Cloud sync failed, using local data', 'warning');
+        }
+        
+        // Fallback to local storage
         const data = localStorage.getItem('japanese-srs-userdata');
         return data ? JSON.parse(data) : [];
     }
 
-    setUserData(data) {
+    async setUserData(data) {
+        // Always save to local storage
         localStorage.setItem('japanese-srs-userdata', JSON.stringify(data));
+        
+        // Try to save to cloud if configured
+        if (this.useCloudStorage && this.cloudStorage.isConfigured) {
+            try {
+                await this.cloudStorage.saveData(data);
+                this.showNotification('Progress synced to cloud', 'success');
+            } catch (error) {
+                console.error('Cloud save failed:', error);
+                this.showNotification('Cloud sync failed, saved locally', 'warning');
+            }
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element if it doesn't exist
+        let notification = document.getElementById('notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = 'notification';
+            document.body.appendChild(notification);
+        }
+        
+        notification.textContent = message;
+        notification.className = `notification ${type} show`;
+        
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
     }
 
     getWords() {
