@@ -15,7 +15,7 @@
                 <nav class="nav">
                     <button class="nav-btn active" data-view="dashboard">Dashboard</button>
                     <button class="nav-btn" data-view="review">Review</button>
-                    <button class="nav-btn" data-view="debug">Debug</button>
+                    <button class="nav-btn" data-view="practice">Practice</button>
                     <button class="nav-btn" data-view="browse">Browse</button>
                 </nav>
             </div>
@@ -44,7 +44,7 @@
                         <div class="progress-grid">
                             <div class="progress-item apprentice">
                                 <div class="progress-header">
-                                    <span class="progress-title">Apprentice</span>
+                                    <span class="progress-title">🌱 Apprentice</span>
                                     <span class="progress-count" id="apprentice-count">0</span>
                                 </div>
                                 <div class="progress-bar">
@@ -54,7 +54,7 @@
                             
                             <div class="progress-item guru">
                                 <div class="progress-header">
-                                    <span class="progress-title">Guru</span>
+                                    <span class="progress-title">🎓 Guru</span>
                                     <span class="progress-count" id="guru-count">0</span>
                                 </div>
                                 <div class="progress-bar">
@@ -64,7 +64,7 @@
                             
                             <div class="progress-item master">
                                 <div class="progress-header">
-                                    <span class="progress-title">Master</span>
+                                    <span class="progress-title">👑 Master</span>
                                     <span class="progress-count" id="master-count">0</span>
                                 </div>
                                 <div class="progress-bar">
@@ -74,7 +74,7 @@
                             
                             <div class="progress-item enlightened">
                                 <div class="progress-header">
-                                    <span class="progress-title">Enlightened</span>
+                                    <span class="progress-title">✨ Enlightened</span>
                                     <span class="progress-count" id="enlightened-count">0</span>
                                 </div>
                                 <div class="progress-bar">
@@ -84,7 +84,7 @@
                             
                             <div class="progress-item burned">
                                 <div class="progress-header">
-                                    <span class="progress-title">Burned</span>
+                                    <span class="progress-title">🔥 Burned</span>
                                     <span class="progress-count" id="burned-count">0</span>
                                 </div>
                                 <div class="progress-bar">
@@ -139,6 +139,7 @@
                     
                     <div class="review-card" id="review-card">
                         <div class="word-display">
+                            <div class="stage-indicator" id="current-stage">🌱 Apprentice 1</div>
                             <div class="kanji" id="current-kanji">日本語</div>
                             <div class="furigana" id="current-furigana" style="display: none;">にほんご</div>
                             <div class="translation" id="current-translation" style="display: none;">Japanese language</div>
@@ -199,6 +200,7 @@
                     
                     <div class="review-card" id="debug-card" style="display: none;">
                         <div class="word-display">
+                            <div class="stage-indicator" id="debug-stage">🌱 Apprentice 1</div>
                             <div class="kanji" id="debug-kanji">日本語</div>
                             <div class="furigana" id="debug-furigana" style="display: none;">にほんご</div>
                             <div class="translation" id="debug-translation" style="display: none;">Japanese language</div>

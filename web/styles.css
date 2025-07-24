@@ -276,6 +276,19 @@ body {
 
 .word-display {
     margin-bottom: 2rem;
+    text-align: center;
+}
+
+.stage-indicator {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    display: inline-block;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .kanji {

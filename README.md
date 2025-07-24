@@ -7,7 +7,7 @@ A modern desktop application for learning Japanese vocabulary using the Spaced R
 - **Dashboard**: View your learning progress and statistics
 - **Review System**: Study words with SRS-based scheduling
 - **Multiple Translations**: Words with multiple valid meanings are supported
-- **Debug Mode**: Practice without affecting SRS progress
+- **Practice Mode**: Practice without affecting SRS progress
 - **Word Browser**: Browse and search through your vocabulary
 - **Progress Tracking**: Track your learning across different SRS stages
 - **Keyboard Shortcuts**: Efficient review with keyboard shortcuts

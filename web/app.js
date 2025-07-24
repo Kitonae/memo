@@ -166,6 +166,19 @@ class WebJapaneseSRSApp {
         };
         this.STAGE_ORDER = Object.keys(this.STAGES);
         
+        // Stage emojis for visual representation
+        this.STAGE_EMOJIS = {
+            "Apprentice 1": "🌱",
+            "Apprentice 2": "🌱", 
+            "Apprentice 3": "🌱",
+            "Apprentice 4": "🌱",
+            "Guru 1": "🎓",
+            "Guru 2": "🎓", 
+            "Master": "👑",
+            "Enlightened": "✨",
+            "Burned": "🔥"
+        };
+        
         this.init();
     }
 
@@ -822,13 +835,13 @@ class WebJapaneseSRSApp {
 
             this.currentReviewIndex = 0;
             this.switchView('review');
-            this.showCurrentReviewWord();
+            await this.showCurrentReviewWord();
         } catch (error) {
             console.error('Error starting review:', error);
         }
     }
 
-    showCurrentReviewWord() {
+    async showCurrentReviewWord() {
         if (this.currentReviewIndex >= this.reviewWords.length) {
             this.completeReview();
             return;
@@ -844,6 +857,12 @@ class WebJapaneseSRSApp {
         // Show word
         document.getElementById('current-kanji').textContent = word.kanji;
         document.getElementById('current-furigana').textContent = word.furigana;
+        
+        // Show current stage with emoji
+        const userData = await this.getUserData();
+        const wordProgress = userData.words[word.kanji];
+        const currentStage = wordProgress ? wordProgress.stage : 'Apprentice 1';
+        document.getElementById('current-stage').textContent = this.getStageDisplayText(currentStage);
         
         // Handle multiple translations with descriptions
         const translationElement = document.getElementById('current-translation');
@@ -954,8 +973,8 @@ class WebJapaneseSRSApp {
             this.currentReviewIndex++;
             
             // Small delay for UX
-            setTimeout(() => {
-                this.showCurrentReviewWord();
+            setTimeout(async () => {
+                await this.showCurrentReviewWord();
             }, 300);
         } catch (error) {
             console.error('Error submitting answer:', error);
@@ -984,7 +1003,7 @@ class WebJapaneseSRSApp {
             
             document.getElementById('debug-card').style.display = 'flex';
             document.getElementById('debug-complete').style.display = 'none';
-            this.showCurrentDebugWord();
+            await this.showCurrentDebugWord();
         } catch (error) {
             console.error('Error starting debug session:', error);
         }
@@ -1013,7 +1032,7 @@ class WebJapaneseSRSApp {
         });
     }
 
-    showCurrentDebugWord() {
+    async showCurrentDebugWord() {
         if (this.currentDebugIndex >= this.debugWords.length) {
             this.completeDebugSession();
             return;
@@ -1029,6 +1048,12 @@ class WebJapaneseSRSApp {
         // Show word
         document.getElementById('debug-kanji').textContent = word.kanji;
         document.getElementById('debug-furigana').textContent = word.furigana;
+        
+        // Show current stage with emoji
+        const userData = await this.getUserData();
+        const wordProgress = userData.words[word.kanji];
+        const currentStage = wordProgress ? wordProgress.stage : 'Apprentice 1';
+        document.getElementById('debug-stage').textContent = this.getStageDisplayText(currentStage);
         
         // Handle multiple translations with descriptions
         const translationElement = document.getElementById('debug-translation');
@@ -1140,8 +1165,8 @@ class WebJapaneseSRSApp {
             this.currentDebugIndex++;
             
             // Small delay for UX
-            setTimeout(() => {
-                this.showCurrentDebugWord();
+            setTimeout(async () => {
+                await this.showCurrentDebugWord();
             }, 300);
         } catch (error) {
             console.error('Error submitting debug answer:', error);
@@ -1169,6 +1194,7 @@ class WebJapaneseSRSApp {
             const userProgress = userProgressMap.get(word.kanji);
             const stage = userProgress ? userProgress.stage : 'New';
             const stageClass = stage.toLowerCase().replace(' ', '-');
+            const stageDisplay = stage === 'New' ? '⭐ New' : this.getStageDisplayText(stage);
             
             // Format translations
             const formattedTranslations = word.translations.map(t => {
@@ -1185,7 +1211,7 @@ class WebJapaneseSRSApp {
                         <div class="word-furigana">${word.furigana}</div>
                         <div class="word-translation">${formattedTranslations.join(', ')}</div>
                     </div>
-                    <div class="word-stage ${stageClass}">${stage}</div>
+                    <div class="word-stage ${stageClass}">${stageDisplay}</div>
                 </div>
             `;
         }).join('');
@@ -1203,6 +1229,17 @@ class WebJapaneseSRSApp {
             const matches = kanji.includes(term) || furigana.includes(term) || translation.includes(term);
             card.style.display = matches ? 'block' : 'none';
         });
+    }
+    
+    // Helper method to get stage display text with emoji
+    getStageDisplayText(stage) {
+        const emoji = this.STAGE_EMOJIS[stage] || "";
+        return `${emoji} ${stage}`;
+    }
+    
+    // Helper method to get just the emoji for a stage
+    getStageEmoji(stage) {
+        return this.STAGE_EMOJIS[stage] || "";
     }
 }
 
