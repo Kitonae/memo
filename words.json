@@ -1,0 +1,980 @@
+[
+    {
+        "kanji": "私",
+        "furigana": "watashi",
+        "translations": [
+            {
+                "text": "I",
+                "description": null
+            },
+            {
+                "text": "me",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "僕",
+        "furigana": "boku",
+        "translations": [
+            {
+                "text": "I",
+                "description": "male"
+            }
+        ]
+    },
+    {
+        "kanji": "俺",
+        "furigana": "ore",
+        "translations": [
+            {
+                "text": "I",
+                "description": "casual male"
+            }
+        ]
+    },
+    {
+        "kanji": "あなた",
+        "furigana": "anata",
+        "translations": [
+            {
+                "text": "you",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "君",
+        "furigana": "kimi",
+        "translations": [
+            {
+                "text": "you",
+                "description": "casual"
+            }
+        ]
+    },
+    {
+        "kanji": "彼",
+        "furigana": "kare",
+        "translations": [
+            {
+                "text": "he",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "彼女",
+        "furigana": "kanojo",
+        "translations": [
+            {
+                "text": "she",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "私たち",
+        "furigana": "watashitachi",
+        "translations": [
+            {
+                "text": "we",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "彼ら",
+        "furigana": "karera",
+        "translations": [
+            {
+                "text": "they",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "する",
+        "furigana": "suru",
+        "translations": [
+            {
+                "text": "to do",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "ある",
+        "furigana": "aru",
+        "translations": [
+            {
+                "text": "to exist",
+                "description": "inanimate"
+            }
+        ]
+    },
+    {
+        "kanji": "いる",
+        "furigana": "iru",
+        "translations": [
+            {
+                "text": "to exist",
+                "description": "animate"
+            }
+        ]
+    },
+    {
+        "kanji": "行く",
+        "furigana": "iku",
+        "translations": [
+            {
+                "text": "to go",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "来る",
+        "furigana": "kuru",
+        "translations": [
+            {
+                "text": "to come",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "見る",
+        "furigana": "miru",
+        "translations": [
+            {
+                "text": "to see",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "言う",
+        "furigana": "iu",
+        "translations": [
+            {
+                "text": "to say",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "食べる",
+        "furigana": "taberu",
+        "translations": [
+            {
+                "text": "to eat",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "飲む",
+        "furigana": "nomu",
+        "translations": [
+            {
+                "text": "to drink",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "書く",
+        "furigana": "kaku",
+        "translations": [
+            {
+                "text": "to write",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "今日",
+        "furigana": "kyou",
+        "translations": [
+            {
+                "text": "today",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "昨日",
+        "furigana": "kinou",
+        "translations": [
+            {
+                "text": "yesterday",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "明日",
+        "furigana": "ashita",
+        "translations": [
+            {
+                "text": "tomorrow",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "今",
+        "furigana": "ima",
+        "translations": [
+            {
+                "text": "now",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "時",
+        "furigana": "toki",
+        "translations": [
+            {
+                "text": "time",
+                "description": null
+            },
+            {
+                "text": "hour",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "分",
+        "furigana": "fun/pun",
+        "translations": [
+            {
+                "text": "minute",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "午前",
+        "furigana": "gozen",
+        "translations": [
+            {
+                "text": "a.m.",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "午後",
+        "furigana": "gogo",
+        "translations": [
+            {
+                "text": "p.m.",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "朝",
+        "furigana": "asa",
+        "translations": [
+            {
+                "text": "morning",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "昼",
+        "furigana": "hiru",
+        "translations": [
+            {
+                "text": "noon",
+                "description": null
+            },
+            {
+                "text": "day",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "人",
+        "furigana": "hito",
+        "translations": [
+            {
+                "text": "person",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "子供",
+        "furigana": "kodomo",
+        "translations": [
+            {
+                "text": "child",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "学生",
+        "furigana": "gakusei",
+        "translations": [
+            {
+                "text": "student",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "先生",
+        "furigana": "sensei",
+        "translations": [
+            {
+                "text": "teacher",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "学校",
+        "furigana": "gakkou",
+        "translations": [
+            {
+                "text": "school",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "家",
+        "furigana": "ie",
+        "translations": [
+            {
+                "text": "house",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "部屋",
+        "furigana": "heya",
+        "translations": [
+            {
+                "text": "room",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "車",
+        "furigana": "kuruma",
+        "translations": [
+            {
+                "text": "car",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "店",
+        "furigana": "mise",
+        "translations": [
+            {
+                "text": "store",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "仕事",
+        "furigana": "shigoto",
+        "translations": [
+            {
+                "text": "work",
+                "description": null
+            },
+            {
+                "text": "job",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "駅",
+        "furigana": "eki",
+        "translations": [
+            {
+                "text": "station",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "病院",
+        "furigana": "byouin",
+        "translations": [
+            {
+                "text": "hospital",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "銀行",
+        "furigana": "ginkou",
+        "translations": [
+            {
+                "text": "bank",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "会社",
+        "furigana": "kaisha",
+        "translations": [
+            {
+                "text": "company",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "公園",
+        "furigana": "kouen",
+        "translations": [
+            {
+                "text": "park",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "何",
+        "furigana": "nani",
+        "translations": [
+            {
+                "text": "what",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "どこ",
+        "furigana": "doko",
+        "translations": [
+            {
+                "text": "where",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "誰",
+        "furigana": "dare",
+        "translations": [
+            {
+                "text": "who",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "いつ",
+        "furigana": "itsu",
+        "translations": [
+            {
+                "text": "when",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "なぜ",
+        "furigana": "naze",
+        "translations": [
+            {
+                "text": "why",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "どうして",
+        "furigana": "doushite",
+        "translations": [
+            {
+                "text": "why",
+                "description": "casual"
+            }
+        ]
+    },
+    {
+        "kanji": "どうやって",
+        "furigana": "douyatte",
+        "translations": [
+            {
+                "text": "how",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "どの",
+        "furigana": "dono",
+        "translations": [
+            {
+                "text": "which",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "どれ",
+        "furigana": "dore",
+        "translations": [
+            {
+                "text": "which one",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "大きい",
+        "furigana": "ookii",
+        "translations": [
+            {
+                "text": "big",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "小さい",
+        "furigana": "chiisai",
+        "translations": [
+            {
+                "text": "small",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "新しい",
+        "furigana": "atarashii",
+        "translations": [
+            {
+                "text": "new",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "古い",
+        "furigana": "furui",
+        "translations": [
+            {
+                "text": "old",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "良い",
+        "furigana": "ii",
+        "translations": [
+            {
+                "text": "good",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "悪い",
+        "furigana": "warui",
+        "translations": [
+            {
+                "text": "bad",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "早い",
+        "furigana": "hayai",
+        "translations": [
+            {
+                "text": "early",
+                "description": null
+            },
+            {
+                "text": "fast",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "遅い",
+        "furigana": "osoi",
+        "translations": [
+            {
+                "text": "slow",
+                "description": null
+            },
+            {
+                "text": "late",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "高い",
+        "furigana": "takai",
+        "translations": [
+            {
+                "text": "tall",
+                "description": null
+            },
+            {
+                "text": "expensive",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "安い",
+        "furigana": "yasui",
+        "translations": [
+            {
+                "text": "cheap",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "は",
+        "furigana": "wa",
+        "translations": [
+            {
+                "text": "topic marker",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "が",
+        "furigana": "ga",
+        "translations": [
+            {
+                "text": "subject marker",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "を",
+        "furigana": "o",
+        "translations": [
+            {
+                "text": "object marker",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "に",
+        "furigana": "ni",
+        "translations": [
+            {
+                "text": "time",
+                "description": null
+            },
+            {
+                "text": "direction marker",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "で",
+        "furigana": "de",
+        "translations": [
+            {
+                "text": "location",
+                "description": null
+            },
+            {
+                "text": "method marker",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "と",
+        "furigana": "to",
+        "translations": [
+            {
+                "text": "and",
+                "description": null
+            },
+            {
+                "text": "with",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "も",
+        "furigana": "mo",
+        "translations": [
+            {
+                "text": "also",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "の",
+        "furigana": "no",
+        "translations": [
+            {
+                "text": "possessive",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "から",
+        "furigana": "kara",
+        "translations": [
+            {
+                "text": "from",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "まで",
+        "furigana": "made",
+        "translations": [
+            {
+                "text": "until",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "はい",
+        "furigana": "hai",
+        "translations": [
+            {
+                "text": "yes",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "いいえ",
+        "furigana": "iie",
+        "translations": [
+            {
+                "text": "no",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "ありがとう",
+        "furigana": "arigatou",
+        "translations": [
+            {
+                "text": "thank you",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "すみません",
+        "furigana": "sumimasen",
+        "translations": [
+            {
+                "text": "excuse me",
+                "description": null
+            },
+            {
+                "text": "sorry",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "ごめん",
+        "furigana": "gomen",
+        "translations": [
+            {
+                "text": "sorry",
+                "description": "casual"
+            }
+        ]
+    },
+    {
+        "kanji": "おはよう",
+        "furigana": "ohayou",
+        "translations": [
+            {
+                "text": "good morning",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "こんにちは",
+        "furigana": "konnichiwa",
+        "translations": [
+            {
+                "text": "hello",
+                "description": null
+            },
+            {
+                "text": "good afternoon",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "こんばんは",
+        "furigana": "konbanwa",
+        "translations": [
+            {
+                "text": "good evening",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "おやすみ",
+        "furigana": "oyasumi",
+        "translations": [
+            {
+                "text": "good night",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "行ってきます",
+        "furigana": "ittekimasu",
+        "translations": [
+            {
+                "text": "I’m leaving",
+                "description": "home"
+            }
+        ]
+    },
+    {
+        "kanji": "行ってらっしゃい",
+        "furigana": "itterasshai",
+        "translations": [
+            {
+                "text": "Take care",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "ただいま",
+        "furigana": "tadaima",
+        "translations": [
+            {
+                "text": "I’m back",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "おかえり",
+        "furigana": "okaeri",
+        "translations": [
+            {
+                "text": "welcome back",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "よろしくお願いします",
+        "furigana": "yoroshiku onegaishimasu",
+        "translations": [
+            {
+                "text": "nice to meet you",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "お願いします",
+        "furigana": "onegaishimasu",
+        "translations": [
+            {
+                "text": "please",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "どういたしまして",
+        "furigana": "douitashimashite",
+        "translations": [
+            {
+                "text": "you're welcome",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "大丈夫",
+        "furigana": "daijoubu",
+        "translations": [
+            {
+                "text": "it's okay",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "本当に",
+        "furigana": "hontou ni",
+        "translations": [
+            {
+                "text": "really",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "うん",
+        "furigana": "un",
+        "translations": [
+            {
+                "text": "yeah",
+                "description": null
+            }
+        ]
+    },
+    {
+        "kanji": "ううん",
+        "furigana": "uun",
+        "translations": [
+            {
+                "text": "nope",
+                "description": null
+            }
+        ]
+    }
+]

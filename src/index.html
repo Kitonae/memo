@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese SRS - 日本語勉強</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">日本語 SRS</h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-view="review">Review</button>
+                    <button class="nav-btn" data-view="debug">Debug</button>
+                    <button class="nav-btn" data-view="browse">Browse</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard View -->
+            <div class="view active" id="dashboard-view">
+                <div class="dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card reviews-card">
+                            <div class="stat-number" id="review-count">0</div>
+                            <div class="stat-label">Reviews Available</div>
+                            <button class="start-review-btn" id="start-review">Start Reviewing</button>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-words">0</div>
+                            <div class="stat-label">Total Words</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <h2>Learning Progress</h2>
+                        <div class="progress-grid">
+                            <div class="progress-item apprentice">
+                                <div class="progress-header">
+                                    <span class="progress-title">Apprentice</span>
+                                    <span class="progress-count" id="apprentice-count">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="apprentice-progress"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-item guru">
+                                <div class="progress-header">
+                                    <span class="progress-title">Guru</span>
+                                    <span class="progress-count" id="guru-count">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="guru-progress"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-item master">
+                                <div class="progress-header">
+                                    <span class="progress-title">Master</span>
+                                    <span class="progress-count" id="master-count">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="master-progress"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-item enlightened">
+                                <div class="progress-header">
+                                    <span class="progress-title">Enlightened</span>
+                                    <span class="progress-count" id="enlightened-count">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="enlightened-progress"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-item burned">
+                                <div class="progress-header">
+                                    <span class="progress-title">Burned</span>
+                                    <span class="progress-count" id="burned-count">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="burned-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review View -->
+            <div class="view" id="review-view">
+                <div class="review-container">
+                    <div class="review-header">
+                        <button class="back-btn" id="back-to-dashboard">← Back to Dashboard</button>
+                        <span class="review-progress" id="review-progress">0 / 0</span>
+                    </div>
+                    
+                    <div class="review-card" id="review-card">
+                        <div class="word-display">
+                            <div class="kanji" id="current-kanji">日本語</div>
+                            <div class="furigana" id="current-furigana" style="display: none;">にほんご</div>
+                            <div class="translation" id="current-translation" style="display: none;">Japanese language</div>
+                        </div>
+                        
+                        <div class="answer-input-container" id="answer-input-container">
+                            <input type="text" class="answer-input" id="answer-input" placeholder="Enter your answer..." autocomplete="off">
+                            <div class="input-hint">Press Enter to submit</div>
+                        </div>
+                        
+                        <div class="review-actions" id="review-actions" style="display: none;">
+                            <button class="review-btn incorrect" id="incorrect-btn">Incorrect</button>
+                            <button class="review-btn correct" id="correct-btn">Correct</button>
+                        </div>
+                        
+                        <div class="show-answer" id="show-answer" style="display: none;">
+                            <button class="show-answer-btn">Show Answer</button>
+                        </div>
+                        
+                        <div class="validation-result" id="validation-result" style="display: none;">
+                            <div class="validation-message" id="validation-message"></div>
+                            <div class="correct-answers" id="correct-answers"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="no-reviews" id="no-reviews" style="display: none;">
+                        <h2>🎉 All caught up!</h2>
+                        <p>No reviews available right now. Come back later!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Debug View -->
+            <div class="view" id="debug-view">
+                <div class="debug-container">
+                    <div class="debug-header">
+                        <button class="back-btn" id="debug-back-to-dashboard">← Back to Dashboard</button>
+                        <div class="debug-info">
+                            <span class="debug-badge">DEBUG MODE</span>
+                            <span class="debug-progress" id="debug-progress">0 / 0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="debug-controls">
+                        <label for="debug-count">Number of words:</label>
+                        <select id="debug-count">
+                            <option value="5">5 words</option>
+                            <option value="10" selected>10 words</option>
+                            <option value="20">20 words</option>
+                            <option value="50">50 words</option>
+                        </select>
+                        <button class="start-debug-btn" id="start-debug">Start Debug Session</button>
+                    </div>
+                    
+                    <div class="debug-notice">
+                        <p>🛠️ Debug mode lets you practice without affecting your SRS progress</p>
+                    </div>
+                    
+                    <div class="review-card" id="debug-card" style="display: none;">
+                        <div class="word-display">
+                            <div class="kanji" id="debug-kanji">日本語</div>
+                            <div class="furigana" id="debug-furigana" style="display: none;">にほんご</div>
+                            <div class="translation" id="debug-translation" style="display: none;">Japanese language</div>
+                        </div>
+                        
+                        <div class="answer-input-container" id="debug-answer-input-container">
+                            <input type="text" class="answer-input" id="debug-answer-input" placeholder="Enter your answer..." autocomplete="off">
+                            <div class="input-hint">Press Enter to submit</div>
+                        </div>
+                        
+                        <div class="review-actions" id="debug-actions" style="display: none;">
+                            <button class="review-btn incorrect" id="debug-incorrect-btn">Incorrect</button>
+                            <button class="review-btn correct" id="debug-correct-btn">Correct</button>
+                        </div>
+                        
+                        <div class="show-answer" id="debug-show-answer" style="display: none;">
+                            <button class="show-answer-btn">Show Answer</button>
+                        </div>
+                        
+                        <div class="validation-result" id="debug-validation-result" style="display: none;">
+                            <div class="validation-message" id="debug-validation-message"></div>
+                            <div class="correct-answers" id="debug-correct-answers"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="debug-complete" id="debug-complete" style="display: none;">
+                        <h2>🎯 Debug Session Complete!</h2>
+                        <p>No SRS progress was affected. Ready for another session?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browse View -->
+            <div class="view" id="browse-view">
+                <div class="browse-container">
+                    <div class="browse-header">
+                        <h2>Word Dictionary</h2>
+                        <div class="search-container">
+                            <input type="text" class="search-input" id="search-input" placeholder="Search words...">
+                        </div>
+                    </div>
+                    
+                    <div class="word-grid" id="word-grid">
+                        <!-- Words will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
