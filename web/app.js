@@ -986,6 +986,10 @@ class WebJapaneseSRSApp {
             document.getElementById('no-reviews').style.display = 'none';
             document.getElementById('review-card').style.display = 'flex';
             
+            // Add initial animation
+            const reviewCard = document.getElementById('review-card');
+            reviewCard.classList.add('review-card-animate');
+            
             this.currentReviewIndex = 0;
             await this.showCurrentReviewWord();
         } catch (error) {
@@ -1114,6 +1118,36 @@ class WebJapaneseSRSApp {
 
         const word = this.reviewWords[this.currentReviewIndex];
         this.isAnswerVisible = false;
+
+        // Try a different animation approach using CSS transitions
+        const reviewCard = document.getElementById('review-card');
+        console.log('Review card element:', reviewCard);
+        
+        // Remove any existing animation classes
+        reviewCard.classList.remove('review-card-animate', 'card-enter', 'card-enter-active');
+        
+        // Force a style recalculation to ensure clean slate
+        reviewCard.offsetHeight;
+        
+        // Add the enter class to start the animation
+        reviewCard.classList.add('card-enter');
+        console.log('Added card-enter class:', reviewCard.className);
+        
+        // Use requestAnimationFrame to ensure the browser has processed the class addition
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                console.log('Triggering transition animation');
+                reviewCard.classList.remove('card-enter');
+                reviewCard.classList.add('card-enter-active');
+                console.log('Animation triggered, classes:', reviewCard.className);
+                
+                // Remove the active class after animation completes
+                setTimeout(() => {
+                    reviewCard.classList.remove('card-enter-active');
+                    console.log('Animation complete, cleaned up classes');
+                }, 1200); // Match the CSS animation duration
+            });
+        });
 
         // Update progress
         document.getElementById('review-progress').textContent = 
@@ -1248,10 +1282,10 @@ class WebJapaneseSRSApp {
             
             this.currentReviewIndex++;
             
-            // Small delay for UX
+            // Add a small delay to allow for animation reset and visual feedback
             setTimeout(async () => {
                 await this.showCurrentReviewWord();
-            }, 300);
+            }, 150);
         } catch (error) {
             console.error('Error submitting answer:', error);
         }
@@ -1316,6 +1350,20 @@ class WebJapaneseSRSApp {
 
         const word = this.practiceWords[this.currentPracticeIndex];
         this.isAnswerVisible = false;
+
+        // Add animation class to practice card
+        const practiceCard = document.getElementById('practice-card');
+        if (practiceCard) {
+            practiceCard.classList.remove('review-card-animate');
+            
+            // Force a reflow and wait a bit before adding the animation class
+            void practiceCard.offsetHeight; // Force reflow
+            
+            // Add a small delay to ensure the class removal is processed
+            setTimeout(() => {
+                practiceCard.classList.add('review-card-animate');
+            }, 10);
+        }
 
         // Update progress
         document.getElementById('practice-progress').textContent = 
@@ -1441,10 +1489,10 @@ class WebJapaneseSRSApp {
             
             this.currentPracticeIndex++;
             
-            // Small delay for UX
+            // Add a small delay to allow for animation reset and visual feedback
             setTimeout(async () => {
                 await this.showCurrentPracticeWord();
-            }, 300);
+            }, 150);
         } catch (error) {
             console.error('Error submitting practice answer:', error);
         }
