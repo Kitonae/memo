@@ -337,6 +337,18 @@ class WebJapaneseSRSApp {
                             this.submitAnswer(true);
                         }
                         break;
+                    case 'ArrowLeft':
+                        if (this.isAnswerVisible) {
+                            e.preventDefault();
+                            this.submitAnswer(false);
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (this.isAnswerVisible) {
+                            e.preventDefault();
+                            this.submitAnswer(true);
+                        }
+                        break;
                     case 'Escape':
                         await this.switchView('dashboard');
                         break;
@@ -357,6 +369,18 @@ class WebJapaneseSRSApp {
                         break;
                     case '2':
                         if (this.isAnswerVisible) {
+                            this.submitPracticeAnswer(true);
+                        }
+                        break;
+                    case 'ArrowLeft':
+                        if (this.isAnswerVisible) {
+                            e.preventDefault();
+                            this.submitPracticeAnswer(false);
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (this.isAnswerVisible) {
+                            e.preventDefault();
                             this.submitPracticeAnswer(true);
                         }
                         break;
@@ -958,31 +982,12 @@ class WebJapaneseSRSApp {
                 return;
             }
 
-            // If there are reviews available, show a prompt to start reviewing
+            // If there are reviews available, automatically start the first word
             document.getElementById('no-reviews').style.display = 'none';
             document.getElementById('review-card').style.display = 'flex';
             
-            // Update progress display
-            document.getElementById('review-progress').textContent = `${this.reviewWords.length} reviews available`;
-            
-            // Show a prompt to start
-            document.getElementById('current-kanji').textContent = 'Ready to Review!';
-            document.getElementById('current-furigana').style.display = 'none';
-            document.getElementById('current-translation').style.display = 'none';
-            document.getElementById('current-stage').textContent = `📚 ${this.reviewWords.length} words waiting`;
-            
-            // Hide review controls and show start prompt
-            document.getElementById('answer-input-container').style.display = 'none';
-            document.getElementById('review-actions').style.display = 'none';
-            document.getElementById('show-answer').style.display = 'none';
-            document.getElementById('validation-result').style.display = 'none';
-            
-            // Show a start review button in place of the show-answer button
-            const showAnswerDiv = document.getElementById('show-answer');
-            showAnswerDiv.innerHTML = '<button class="show-answer-btn" onclick="window.app.startReview()">Start Reviewing</button>';
-            showAnswerDiv.style.display = 'block';
-            
             this.currentReviewIndex = 0;
+            await this.showCurrentReviewWord();
         } catch (error) {
             console.error('Error rendering review:', error);
         }
@@ -1160,8 +1165,18 @@ class WebJapaneseSRSApp {
         document.getElementById('answer-input').value = '';
         document.getElementById('answer-input').focus();
         
-        // Show a "Show Answer" button as fallback
-        document.getElementById('show-answer').style.display = 'block';
+        // Reset and show the "Show Answer" button (not "Start Reviewing")
+        const showAnswerDiv = document.getElementById('show-answer');
+        showAnswerDiv.innerHTML = '<button class="show-answer-btn">Show Answer</button>';
+        showAnswerDiv.style.display = 'block';
+        
+        // Add click event handler to the new button
+        const showAnswerBtn = showAnswerDiv.querySelector('.show-answer-btn');
+        if (showAnswerBtn) {
+            showAnswerBtn.addEventListener('click', () => {
+                this.showAnswer();
+            });
+        }
     }
 
     showAnswer() {
@@ -1189,8 +1204,9 @@ class WebJapaneseSRSApp {
             
             this.displayValidationResult(result, userAnswer);
             
-            // Hide input container
+            // Hide input container and show answer button
             document.getElementById('answer-input-container').style.display = 'none';
+            document.getElementById('show-answer').style.display = 'none';
             
             // Show furigana and translation
             document.getElementById('current-furigana').style.display = 'block';
@@ -1380,8 +1396,9 @@ class WebJapaneseSRSApp {
             
             this.displayPracticeValidationResult(result, userAnswer);
             
-            // Hide input container
+            // Hide input container and show answer button
             document.getElementById('practice-answer-input-container').style.display = 'none';
+            document.getElementById('practice-show-answer').style.display = 'none';
             
             // Show furigana and translation
             document.getElementById('practice-furigana').style.display = 'block';
