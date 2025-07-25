@@ -765,7 +765,7 @@ class WebJapaneseSRSApp {
         if (Object.keys(userWordsMap).length === 0) {
             // First time: introduce initial batch
             shouldIntroduceWords = true;
-            maxNewWords = 5;
+            maxNewWords = 30;
         } else if (newWords.length === 0 && (!lastNewWordTime || new Date(lastNewWordTime) < oneDayAgo)) {
             // No new words and it's been a day: introduce more
             shouldIntroduceWords = true;
@@ -811,7 +811,7 @@ class WebJapaneseSRSApp {
         const now = new Date();
         
         let newWordsAdded = 0;
-        const maxNewWords = 3; // Add 3 more new words
+        const maxNewWords = 10; // Add 10 more new words
         
         for (const word of words) {
             if (!userKanji.has(word.kanji) && newWordsAdded < maxNewWords) {
