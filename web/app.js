@@ -903,9 +903,57 @@ class WebJapaneseSRSApp {
         stats.reviewCount = reviewCount;
         stats.totalWords = this.allWords.length;
         
+        // Calculate next review time
+        stats.nextReviewTime = this.getNextReviewTime(userWordsArray, now);
+        
         this.stats = stats;
         
         return stats;
+    }
+
+    getNextReviewTime(userWordsArray, now) {
+        if (!userWordsArray || userWordsArray.length === 0) {
+            return null;
+        }
+        
+        // Find the earliest next_review time that's in the future
+        let earliestTime = null;
+        
+        for (const word of userWordsArray) {
+            if (word.stage === "Burned" || !word.next_review) continue;
+            
+            const reviewTime = new Date(word.next_review);
+            if (reviewTime > now) {
+                if (!earliestTime || reviewTime < earliestTime) {
+                    earliestTime = reviewTime;
+                }
+            }
+        }
+        
+        return earliestTime;
+    }
+
+    formatTimeUntilReview(nextReviewTime) {
+        if (!nextReviewTime) return null;
+        
+        const now = new Date();
+        const diff = nextReviewTime - now;
+        
+        if (diff <= 0) return "Now";
+        
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const days = Math.floor(hours / 24);
+        
+        if (days > 0) {
+            return `${days} day${days > 1 ? 's' : ''}`;
+        } else if (hours > 0) {
+            return `${hours}h ${minutes}m`;
+        } else if (minutes > 0) {
+            return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+        } else {
+            return "< 1 minute";
+        }
     }
 
     async checkTranslation(kanji, userAnswer) {
@@ -1026,6 +1074,18 @@ class WebJapaneseSRSApp {
             } else {
                 startReviewBtn.disabled = true;
                 startReviewBtn.textContent = 'No Reviews Available';
+            }
+        }
+
+        // Update next review time display
+        const nextReviewTimeEl = document.getElementById('next-review-time');
+        if (nextReviewTimeEl) {
+            if (this.stats.reviewCount === 0 && this.stats.nextReviewTime) {
+                const timeText = this.formatTimeUntilReview(this.stats.nextReviewTime);
+                nextReviewTimeEl.textContent = `Next reviews in ${timeText}`;
+                nextReviewTimeEl.style.display = 'block';
+            } else {
+                nextReviewTimeEl.style.display = 'none';
             }
         }
 

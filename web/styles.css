@@ -73,6 +73,7 @@ body {
 
 /* Footer */
 .footer {
+    display: none; /* Hidden for now */
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -257,6 +258,15 @@ body {
 .start-review-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.next-review-time {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(5px);
+    border: none;
 }
 
 /* Progress Section */
