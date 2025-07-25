@@ -302,6 +302,13 @@ class WebJapaneseSRSApp {
 
         // Keyboard shortcuts
         document.addEventListener('keydown', async (e) => {
+            // Secret keybind for reset: Ctrl+Shift+Alt+R
+            if (e.ctrlKey && e.shiftKey && e.altKey && e.key.toLowerCase() === 'r') {
+                e.preventDefault();
+                await this.resetProgress();
+                return;
+            }
+            
             // Only handle shortcuts if not typing in an input field
             const isTyping = e.target.tagName === 'INPUT';
             
@@ -586,26 +593,6 @@ class WebJapaneseSRSApp {
         }
     }
 
-    showNotification(message, type = 'info') {
-        // Create notification element if it doesn't exist
-        let notification = document.getElementById('notification');
-        if (!notification) {
-            notification = document.createElement('div');
-            notification.id = 'notification';
-            notification.className = 'notification';
-            document.body.appendChild(notification);
-        }
-
-        notification.textContent = message;
-        notification.className = `notification ${type}`;
-        notification.classList.add('show');
-
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
-    }
-
     // Unified storage methods (local + cloud)
     async getUserData() {
         try {
@@ -851,6 +838,49 @@ class WebJapaneseSRSApp {
             await this.renderDashboard();
         } else if (viewName === 'browse') {
             await this.renderBrowse();
+        } else if (viewName === 'review') {
+            await this.renderReview();
+        }
+    }
+
+    async renderReview() {
+        try {
+            this.reviewWords = await this.getReviewWords();
+            
+            if (this.reviewWords.length === 0) {
+                // Show no reviews message
+                document.getElementById('review-card').style.display = 'none';
+                document.getElementById('no-reviews').style.display = 'block';
+                return;
+            }
+
+            // If there are reviews available, show a prompt to start reviewing
+            document.getElementById('no-reviews').style.display = 'none';
+            document.getElementById('review-card').style.display = 'flex';
+            
+            // Update progress display
+            document.getElementById('review-progress').textContent = `${this.reviewWords.length} reviews available`;
+            
+            // Show a prompt to start
+            document.getElementById('current-kanji').textContent = 'Ready to Review!';
+            document.getElementById('current-furigana').style.display = 'none';
+            document.getElementById('current-translation').style.display = 'none';
+            document.getElementById('current-stage').textContent = `📚 ${this.reviewWords.length} words waiting`;
+            
+            // Hide review controls and show start prompt
+            document.getElementById('answer-input-container').style.display = 'none';
+            document.getElementById('review-actions').style.display = 'none';
+            document.getElementById('show-answer').style.display = 'none';
+            document.getElementById('validation-result').style.display = 'none';
+            
+            // Show a start review button in place of the show-answer button
+            const showAnswerDiv = document.getElementById('show-answer');
+            showAnswerDiv.innerHTML = '<button class="show-answer-btn" onclick="window.app.startReview()">Start Reviewing</button>';
+            showAnswerDiv.style.display = 'block';
+            
+            this.currentReviewIndex = 0;
+        } catch (error) {
+            console.error('Error rendering review:', error);
         }
     }
 
@@ -878,7 +908,6 @@ class WebJapaneseSRSApp {
                 startReviewBtn.disabled = true;
                 startReviewBtn.textContent = 'No Reviews Available';
             }
-            addDebug('9. Updated start review button');
         }
 
         // Update progress bars
@@ -941,20 +970,26 @@ class WebJapaneseSRSApp {
         if (burnedProgressEl) {
             burnedProgressEl.style.width = `${(burnedCount / totalWords) * 100}%`;
         }
-        
-        addDebug('10. Completed renderDashboard');
     }
 
     async startReview() {
         try {
             this.reviewWords = await this.getReviewWords();
             
+            await this.switchView('review');
+            
             if (this.reviewWords.length === 0) {
+                // Show no reviews message
+                document.getElementById('review-card').style.display = 'none';
+                document.getElementById('no-reviews').style.display = 'block';
                 return;
             }
 
+            // Hide no reviews message and show review card
+            document.getElementById('no-reviews').style.display = 'none';
+            document.getElementById('review-card').style.display = 'flex';
+            
             this.currentReviewIndex = 0;
-            await this.switchView('review');
             await this.showCurrentReviewWord();
         } catch (error) {
             console.error('Error starting review:', error);
@@ -1352,8 +1387,75 @@ class WebJapaneseSRSApp {
             const translation = card.querySelector('.word-translation').textContent.toLowerCase();
 
             const matches = kanji.includes(term) || furigana.includes(term) || translation.includes(term);
-            card.style.display = matches ? 'block' : 'none';
+            card.style.display = matches ? 'flex' : 'none';
         });
+    }
+    
+    async resetProgress() {
+        // Show confirmation dialog
+        const confirmed = confirm(
+            '🔑 SECRET RESET ACTIVATED 🔑\n\n' +
+            '⚠️ RESET ALL PROGRESS ⚠️\n\n' +
+            'This will permanently delete ALL your learning progress including:\n' +
+            '• All word stages and SRS levels\n' +
+            '• Review schedules\n' +
+            '• Statistics\n\n' +
+            'This action cannot be undone!\n\n' +
+            'Are you sure you want to reset everything?'
+        );
+        
+        if (!confirmed) {
+            return;
+        }
+        
+        // Double confirmation for safety
+        const doubleConfirmed = confirm(
+            'FINAL WARNING!\n\n' +
+            'You are about to delete ALL your progress.\n' +
+            'Click OK to permanently reset everything, or Cancel to keep your progress.'
+        );
+        
+        if (!doubleConfirmed) {
+            return;
+        }
+        
+        try {
+            // Clear all user data
+            const emptyUserData = { words: {}, stats: {} };
+            
+            // Clear local storage first (this should always work)
+            localStorage.setItem('japanese-srs-userdata', JSON.stringify(emptyUserData));
+            
+            // Try to clear cloud storage if configured
+            if (this.useCloudStorage && this.cloudStorage.isConfigured) {
+                try {
+                    await this.cloudStorage.saveData(emptyUserData);
+                } catch (error) {
+                    console.warn('Failed to reset cloud data:', error);
+                    // Don't fail the entire reset if cloud fails
+                }
+            }
+            
+            // Reset local variables
+            this.stats = {};
+            this.reviewWords = [];
+            this.currentReviewIndex = 0;
+            this.practiceWords = [];
+            this.currentPracticeIndex = 0;
+            
+            // Update the stats first
+            await this.updateStats();
+            
+            // Update the dashboard to reflect the reset
+            await this.renderDashboard();
+            
+            // Show success notification
+            this.showNotification('🔄 All progress has been reset successfully!', 'success');
+            
+        } catch (error) {
+            console.error('Error resetting progress:', error);
+            this.showNotification('Failed to reset progress: ' + error.message, 'error');
+        }
     }
     
     // Helper method to get stage display text with emoji
