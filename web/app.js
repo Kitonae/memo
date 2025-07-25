@@ -154,6 +154,7 @@ class WebJapaneseSRSApp {
         
         // SRS configuration
         this.STAGES = {
+            "New": 0, // New words are immediately available
             "Apprentice 1": 4 * 60 * 60 * 1000, // 4 hours in ms
             "Apprentice 2": 8 * 60 * 60 * 1000, // 8 hours in ms
             "Apprentice 3": 24 * 60 * 60 * 1000, // 1 day in ms
@@ -168,6 +169,7 @@ class WebJapaneseSRSApp {
         
         // Stage emojis for visual representation
         this.STAGE_EMOJIS = {
+            "New": "⭐",
             "Apprentice 1": "🌱",
             "Apprentice 2": "🌱", 
             "Apprentice 3": "🌱",
@@ -185,6 +187,10 @@ class WebJapaneseSRSApp {
     async init() {
         this.setupEventListeners();
         await this.loadInitialData();
+        
+        // Check for available reviews (this will introduce initial words if it's the first time)
+        await this.getReviewWords();
+        
         await this.renderDashboard();
     }
 
@@ -669,26 +675,17 @@ class WebJapaneseSRSApp {
         const now = new Date();
         const reviewWords = [];
         
-        const userKanji = new Set(Object.keys(userWordsMap));
+        // First, check if we need to introduce new words based on timing
+        await this.introduceNewWordsIfNeeded(userWordsMap, words, now);
 
-        // Add new words to user data
-        for (const word of words) {
-            if (!userKanji.has(word.kanji)) {
-                userWordsMap[word.kanji] = {
-                    kanji: word.kanji,
-                    stage: "Apprentice 1",
-                    next_review: new Date(now.getTime() + this.STAGES["Apprentice 1"]).toISOString()
-                };
-                userKanji.add(word.kanji);
-            }
-        }
-
-        await this.setUserData({ words: userWordsMap, stats: userData.stats || {} });
-
-        // Get words due for review
+        // Get words due for review based on their SRS schedule
         for (const [kanji, wordData] of Object.entries(userWordsMap)) {
             if (wordData.stage === "Burned") continue;
-            if (new Date(wordData.next_review) <= now) {
+            
+            // Check if review time has passed (includes "New" words which have immediate availability)
+            const isReviewDue = wordData.next_review && new Date(wordData.next_review) <= now;
+            
+            if (isReviewDue) {
                 const word = words.find(w => w.kanji === wordData.kanji);
                 if (word) {
                     // Format translations for display
@@ -713,6 +710,95 @@ class WebJapaneseSRSApp {
         return reviewWords;
     }
 
+    async introduceNewWordsIfNeeded(userWordsMap, allWords, now) {
+        const userData = await this.getUserData();
+        const userKanji = new Set(Object.keys(userWordsMap));
+        
+        // Check when user last had new words introduced
+        const lastNewWordTime = userData.stats?.lastNewWordTime;
+        const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+        
+        // Count current new words and words in early stages
+        const newWords = Object.values(userWordsMap).filter(w => w.stage === "New");
+        const earlyStageWords = Object.values(userWordsMap).filter(w => 
+            ["New", "Apprentice 1", "Apprentice 2"].includes(w.stage)
+        );
+        
+        // Introduce new words if:
+        // 1. This is the very first time (no words at all)
+        // 2. No new words remain AND it's been at least a day since last introduction
+        // 3. User has fewer than 3 words in early stages (to maintain learning flow)
+        
+        let shouldIntroduceWords = false;
+        let maxNewWords = 0;
+        
+        if (Object.keys(userWordsMap).length === 0) {
+            // First time: introduce initial batch
+            shouldIntroduceWords = true;
+            maxNewWords = 5;
+        } else if (newWords.length === 0 && (!lastNewWordTime || new Date(lastNewWordTime) < oneDayAgo)) {
+            // No new words and it's been a day: introduce more
+            shouldIntroduceWords = true;
+            maxNewWords = 3;
+        } else if (earlyStageWords.length < 3) {
+            // Very few words in pipeline: add a couple more
+            shouldIntroduceWords = true;
+            maxNewWords = 2;
+        }
+        
+        if (shouldIntroduceWords) {
+            let newWordsAdded = 0;
+            
+            for (const word of allWords) {
+                if (!userKanji.has(word.kanji) && newWordsAdded < maxNewWords) {
+                    userWordsMap[word.kanji] = {
+                        kanji: word.kanji,
+                        stage: "New",
+                        next_review: now.toISOString() // Available immediately
+                    };
+                    newWordsAdded++;
+                }
+            }
+            
+            if (newWordsAdded > 0) {
+                // Update the last new word introduction time
+                const updatedStats = userData.stats || {};
+                updatedStats.lastNewWordTime = now.toISOString();
+                
+                await this.setUserData({ 
+                    words: userWordsMap, 
+                    stats: updatedStats 
+                });
+            }
+        }
+    }
+
+    async addMoreNewWords() {
+        const words = this.getWords();
+        const userData = await this.getUserData();
+        const userWordsMap = userData.words || {};
+        const userKanji = new Set(Object.keys(userWordsMap));
+        const now = new Date();
+        
+        let newWordsAdded = 0;
+        const maxNewWords = 3; // Add 3 more new words
+        
+        for (const word of words) {
+            if (!userKanji.has(word.kanji) && newWordsAdded < maxNewWords) {
+                userWordsMap[word.kanji] = {
+                    kanji: word.kanji,
+                    stage: "New",
+                    next_review: now.toISOString()
+                };
+                newWordsAdded++;
+            }
+        }
+        
+        if (newWordsAdded > 0) {
+            await this.setUserData({ words: userWordsMap, stats: userData.stats || {} });
+        }
+    }
+
     async updateWord(kanji, correct, practiceMode = false) {
         if (practiceMode) return { success: true, practiceMode: true };
         
@@ -728,18 +814,35 @@ class WebJapaneseSRSApp {
                     const newStage = this.STAGE_ORDER[currentStageIndex + 1];
                     wordData.stage = newStage;
                     const interval = this.STAGES[newStage];
-                    if (interval) {
+                    if (interval && interval > 0) {
                         wordData.next_review = new Date(Date.now() + interval).toISOString();
+                    } else if (newStage === "New") {
+                        // New stage should be immediately available
+                        wordData.next_review = new Date(Date.now()).toISOString();
                     } else {
                         delete wordData.next_review;
                     }
                 }
             } else {
-                const demotionCount = currentStageIndex > this.STAGE_ORDER.indexOf("Guru 1") ? 2 : 1;
-                const newStageIndex = Math.max(0, currentStageIndex - demotionCount);
+                // For incorrect answers, demote the word
+                let newStageIndex;
+                if (wordData.stage === "New") {
+                    // New words stay at New stage when incorrect
+                    newStageIndex = 0;
+                } else {
+                    const demotionCount = currentStageIndex > this.STAGE_ORDER.indexOf("Guru 1") ? 2 : 1;
+                    newStageIndex = Math.max(0, currentStageIndex - demotionCount);
+                }
                 const newStage = this.STAGE_ORDER[newStageIndex];
                 wordData.stage = newStage;
-                wordData.next_review = new Date(Date.now() + this.STAGES[newStage]).toISOString();
+                
+                const interval = this.STAGES[newStage];
+                if (interval && interval > 0) {
+                    wordData.next_review = new Date(Date.now() + interval).toISOString();
+                } else {
+                    // For "New" stage, make immediately available
+                    wordData.next_review = new Date(Date.now()).toISOString();
+                }
             }
             
             await this.setUserData({ words: userWordsMap, stats: userData.stats || {} });
@@ -760,11 +863,12 @@ class WebJapaneseSRSApp {
         }
         
         const now = new Date();
-        const reviewCount = userWordsArray.filter(word => 
-            word.stage !== "Burned" && 
-            word.next_review && 
-            new Date(word.next_review) <= now
-        ).length;
+        const reviewCount = userWordsArray.filter(word => {
+            if (word.stage === "Burned") return false;
+            
+            // Check if review time has passed (this applies to all stages including "New")
+            return word.next_review && new Date(word.next_review) <= now;
+        }).length;
         
         stats.reviewCount = reviewCount;
         stats.totalWords = this.allWords.length;
@@ -913,8 +1017,9 @@ class WebJapaneseSRSApp {
         // Update progress bars
         const totalWords = this.stats.totalWords || 1; // Prevent division by zero
         
-        // Apprentice (combine all apprentice levels)
-        const apprenticeCount = (this.stats["Apprentice 1"] || 0) + 
+        // Apprentice (combine all apprentice levels + new words)
+        const apprenticeCount = (this.stats["New"] || 0) + 
+                               (this.stats["Apprentice 1"] || 0) + 
                                (this.stats["Apprentice 2"] || 0) + 
                                (this.stats["Apprentice 3"] || 0) + 
                                (this.stats["Apprentice 4"] || 0);
