@@ -731,6 +731,12 @@ class WebJapaneseSRSApp {
             }
         }
 
+        // Shuffle the review words to randomize the order
+        for (let i = reviewWords.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [reviewWords[i], reviewWords[j]] = [reviewWords[j], reviewWords[i]];
+        }
+
         return reviewWords;
     }
 
@@ -1613,14 +1619,18 @@ class WebJapaneseSRSApp {
             this.practiceWords = [];
             this.currentPracticeIndex = 0;
             
-            // Update the stats first
+            // IMPORTANT: After reset, we need to re-introduce initial words
+            // This will add the first batch of words to study
+            await this.getReviewWords(); // This triggers introduceNewWordsIfNeeded
+            
+            // Update the stats after word introduction
             await this.updateStats();
             
-            // Update the dashboard to reflect the reset
+            // Update the dashboard to reflect the reset and new words
             await this.renderDashboard();
             
             // Show success notification
-            this.showNotification('🔄 All progress has been reset successfully!', 'success');
+            this.showNotification('🔄 All progress has been reset successfully! New words are ready to study.', 'success');
             
         } catch (error) {
             console.error('Error resetting progress:', error);
